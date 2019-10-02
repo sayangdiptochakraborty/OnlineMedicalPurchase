@@ -7,6 +7,7 @@ import './common/css/magnific-popup.css';
 //import './common/css/owl.theme.default.min.css';
 import './common/css/aos.css';
 import './common/css/style.css';
+import Home from './common/home';
 
 import Header from './common/header';
 
@@ -14,6 +15,7 @@ function App() {
   return (
     <div>
       <Header/>
+      <Home/>
     </div>
   );
 }

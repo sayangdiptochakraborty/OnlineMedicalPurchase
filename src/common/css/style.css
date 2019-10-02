@@ -60,7 +60,8 @@ a {
     box-shadow: none; }
   .btn.btn-primary:hover {
     background: transparent;
-    color: #51eaea; }
+    color: white;
+     }
   .btn.btn-black {
     background: #000;
     color: #fff; }
@@ -279,7 +280,7 @@ a {
         top: 100%;
         position: absolute;
         text-align: left;
-        border-top: 2px solid #51eaea;
+        border-top: 2px solid #40a9ff;
         -webkit-box-shadow: 0 0px 4px 0px rgba(0, 0, 0, 0.05);
         box-shadow: 0 0px 4px 0px rgba(0, 0, 0, 0.05);
         border-left: 1px solid #edf0f5;
@@ -840,7 +841,7 @@ a {
     line-height: 20px;
     color: #000;
     font-size: 12px;
-    background: #51eaea;
+    background: #40A9FF;
     right: -5px; }
 
 .search-wrap {
