@@ -10,12 +10,14 @@ import './common/css/style.css';
 import Home from './common/home';
 
 import Header from './common/header';
+import Footer from './common/footer';
 
 function App() {
   return (
     <div>
       <Header/>
       <Home/>
+      <Footer/>
     </div>
   );
 }

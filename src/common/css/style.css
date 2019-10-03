@@ -1,7 +1,7 @@
 /* Base */
 body {
   line-height: 1.7;
-  color: #8c92a0;
+  seolor: #8c92a0;
   font-weight: 300;
   font-size: 16px; }
 
@@ -667,12 +667,6 @@ a {
     font-size: 20px;
     line-height: 1;
     color: #51eaea; }
-  .block-5 ul li.address:before {
-    content: "\e8b4"; }
-  .block-5 ul li.email:before {
-    content: "\f0e0"; }
-  .block-5 ul li.phone:before {
-    content: "\f095"; }
 
 .block-6 {
   display: block; }
@@ -1109,7 +1103,7 @@ a {
     z-index: 2; }
 
 .section-overlap {
-  margin-top: -150px; }
+  margin-top: -200px; }
 
 .custom-pill .nav-item {
   margin-right: 4px; }
@@ -1123,3 +1117,7 @@ a {
 
 .custom-table td {
   color: #000; }
+  .row.align-items-stretch.section-overlap
+  {
+    margin-left: 75px;
+  }
