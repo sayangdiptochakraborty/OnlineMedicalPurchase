@@ -1,11 +1,16 @@
 import React, {Component} from 'react';
+import * as firebase from 'firebase';
 import 'antd/dist/antd.css';
 import {Icon} from 'antd';
 import { Modal, Button } from 'antd';
 import { tsObjectKeyword } from '@babel/types';
 import { Input, Select, Divider, Typography} from'antd';
+import firebaseConfig from './firebaseConfig';
+import { Radio } from 'antd';
 const { Option } = Select;
 const { Title, Paragraph, Text } = Typography;
+
+
 export default class Header extends Component{
     constructor(props)
     {
@@ -14,7 +19,12 @@ export default class Header extends Component{
           loggedIn : false,
           visible : false,
           signup : true,
-          search: false
+          search: false,
+          name: '',
+          phone: '',
+          email: '',
+          password: '',
+          type: 'customer'
         }
         this.handleClick = this.handleClick.bind(this);
     }
@@ -40,6 +50,11 @@ export default class Header extends Component{
 
       });
     };
+    componentWillMount()
+    {
+      // Initialize Firebase
+      firebase.initializeApp(firebaseConfig);
+    }
     render()
     {
         return(
@@ -57,7 +72,7 @@ export default class Header extends Component{
         <div className="d-flex align-items-center justify-content-between">
           <div className="logo">
             <div className="site-logo">
-              <a href="javascript:void(0)" className="js-logo-clone">GETMEDS</a>
+              <a href="javascript:void(0)" className="js-logo-clone"><img width={50} height={50} src="/images/logo.png"/>&nbsp;&nbsp;GETMEDS</a>
             </div>
           </div>
           <div className="main-nav d-none d-lg-block">
@@ -70,7 +85,6 @@ export default class Header extends Component{
                     <li><a href="javascript:void(0)">Supplements</a></li>
                     <li><a href="javascript:void(0)">Vitamins</a></li>
                     <li><a href="javascript:void(0)">Diet &amp; Nutrition</a></li>
-                    <li><a href="javascript:void(0)">Tea &amp; Coffee</a></li>
                   </ul>
                 </li>
                 <li><a href="javascript:void(0)">About</a></li>
@@ -118,25 +132,27 @@ export default class Header extends Component{
                         <Title level={3} style={{marginLeft:'118px'}}>Let's create your account!</Title>
                         <br/>
                         <br/>
-                        <Input addonBefore={<Icon type="user" />} placeholder="John Sturgis"/>
+                        <Input addonBefore={<Icon type="user" />} value={this.state.name} onChange={(e)=>{this.setState({name:e.target.value})}} placeholder="John Sturgis"/>
                         <br/>
                         <br/>
-                        <Input addonBefore={<Icon type="mail" />} placeholder="john@gmail.com"/>
-                        <br/>
-                        <br/>
-                        
-                        <Input addonBefore={<Icon type="phone" />} placeholder="9163825442"/>
+                        <Input addonBefore={<Icon type="mail" />} value={this.state.email} onChange={(e)=>{this.setState({email:e.target.value})}} placeholder="john@gmail.com"/>
                         <br/>
                         <br/>
                         
-                        <Input.Password addonBefore={<Icon type="lock" />} placeholder="password" />
+                        <Input addonBefore={<Icon type="phone" />} placeholder="9163825442" value={this.state.phone} onChange={(e)=>{this.setState({phone:e.target.value})}}/>
                         <br/>
                         <br/>
                         
-                        <Select addonBefore={<Icon type="solution" />} style={{width:'100%'}} defaultValue="customer">
-                          <Option value="customer">Customer</Option>
-                          <Option value="vendor">Vendor</Option>
-                        </Select>
+                        <Input.Password addonBefore={<Icon type="lock" />} placeholder="password" value={this.state.password} onChange={(e)=>{this.setState({password:e.target.value})}}/>
+                        <br/>
+                        <br/>
+                        <div className="row" style={{marginLeft:'160px'}}>
+
+                          <Radio.Group defaultValue="customer" buttonStyle="solid" style={{width:'100%'}} value={this.state.type} onChange={(e)=>{this.setState({type:e.target.value})}}>
+                          <Radio.Button value="customer">Customer</Radio.Button>
+                          <Radio.Button value="vendor">Vendor</Radio.Button>
+                        </Radio.Group>
+                        </div>
                         <br/>
                         <br/>
                         
@@ -158,10 +174,10 @@ export default class Header extends Component{
                           <Title level={3} style={{marginLeft:'118px'}}>We're glad to see you again!</Title>
                           <br/>
                           <br/>
-                          <Input addonBefore={<Icon type="mail" />} placeholder="john@gmail.com"/>
+                          <Input addonBefore={<Icon type="mail" />} placeholder="john@gmail.com" value={this.state.email} onChange={(e)=>{this.setState({email:e.target.value})}}/>
                           <br/>
                           <br/>
-                          <Input.Password addonBefore={<Icon type="lock" />} placeholder="password" />
+                          <Input.Password addonBefore={<Icon type="lock" />} placeholder="password" value={this.state.password} onChange={(e)=>{this.setState({password:e.target.value})}}/>
                           <br/>
                           <br/>
                           <Button type="primary" block onClick={(e)=>{this.setState({loggedIn:true,visible:false})}}>
