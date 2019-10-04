@@ -7,8 +7,12 @@ import { tsObjectKeyword } from '@babel/types';
 import { Input, Select, Divider, Typography} from'antd';
 import firebaseConfig from './firebaseConfig';
 import { Radio } from 'antd';
+import 'firebase/auth';
+import 'firebase/database';
+import {message} from 'antd';
 const { Option } = Select;
 const { Title, Paragraph, Text } = Typography;
+
 
 
 export default class Header extends Component{
@@ -24,9 +28,16 @@ export default class Header extends Component{
           phone: '',
           email: '',
           password: '',
-          type: 'customer'
+          address: '',
+          type: 'customer',
+          userID: '',
+          userName: '',
         }
+        firebase.initializeApp(firebaseConfig);
         this.handleClick = this.handleClick.bind(this);
+        
+
+        this.auth = firebase.auth();
     }
     handleClick(e) {
       this.refs.fileUploader.click();
@@ -50,10 +61,33 @@ export default class Header extends Component{
 
       });
     };
+    doCreateUserWithEmailAndPassword()
+    {
+      this.auth.createUserWithEmailAndPassword(this.state.email,this.state.password)
+    }
+    doSignInWithEmailAndPassword = (e) =>
+    {
+      //firebase.initializeApp(firebaseConfig);
+      this.auth.signInWithEmailAndPassword(this.state.email,this.state.password);
+      message.success('Logged In');
+      this.setState({loggedIn:true,visible:false,userID:this.auth.currentUser.uid});
+      sessionStorage.setItem('uid',this.state.userID);
+      var uid=sessionStorage.getItem('uid');
+      this.setState({userName:firebase.database.ref('/medicine-delivery-8cc6f/Buyer/'+uid+'/username')});
+    }
+
+    doSignOut = (e) =>{
+      this.auth.signOut();
+      this.setState({loggedIn:false})
+    }
     componentWillMount()
     {
-      // Initialize Firebase
-      firebase.initializeApp(firebaseConfig);
+      //firebase.initializeApp(firebaseConfig);
+      var uid=sessionStorage.getItem('uid');
+      if(uid!=undefined)
+      {
+        this.setState({userName:firebase.database.ref('/medicine-delivery-8cc6f/Buyer/'+uid+'/username')})
+      }
     }
     render()
     {
@@ -110,7 +144,7 @@ export default class Header extends Component{
                           <ul className="dropdown" style={{marginLeft: '-70px'}}>
                               <li><a href="javascript:void(0)">Howdy Derp!</a></li>
                               <li><a href="javascript:void(0)">Dashboard</a></li>
-                              <li onClick={(e)=>{this.setState({loggedIn:false})}}><a href="javascript:void(0)">Sign Out</a></li>
+                              <li onClick={this.doSignOut}><a href="javascript:void(0)">Sign Out</a></li>
                            </ul>
                       </li>
                   </ul>:<ul className="site-menu js-clone-nav d-none d-lg-block">
@@ -132,10 +166,10 @@ export default class Header extends Component{
                         <Title level={3} style={{marginLeft:'118px'}}>Let's create your account!</Title>
                         <br/>
                         <br/>
-                        <Input addonBefore={<Icon type="user" />} value={this.state.name} onChange={(e)=>{this.setState({name:e.target.value})}} placeholder="John Sturgis"/>
+                        <Input addonBefore={<Icon type="user" />} value={this.state.name} onChange={(e)=>{this.setState({name:e.target.value})}} placeholder={this.state.type==='customer'?"John Sturgis":"Life Care Medicine Retailer"}/>
                         <br/>
                         <br/>
-                        <Input addonBefore={<Icon type="mail" />} value={this.state.email} onChange={(e)=>{this.setState({email:e.target.value})}} placeholder="john@gmail.com"/>
+                        <Input addonBefore={<Icon type="mail" />} value={this.state.email} onChange={(e)=>{this.setState({email:e.target.value})}} placeholder={this.state.type==='customer'?"john@gmail.com":"lifecare@medicare.com"}/>
                         <br/>
                         <br/>
                         
@@ -144,6 +178,9 @@ export default class Header extends Component{
                         <br/>
                         
                         <Input.Password addonBefore={<Icon type="lock" />} placeholder="password" value={this.state.password} onChange={(e)=>{this.setState({password:e.target.value})}}/>
+                        <br/>
+                        <br/>
+                        <Input addonBefore={<Icon type="environment" />} placeholder="12 Baker Street" value={this.state.address} onChange={(e)=>{this.setState({address:e.target.value})}}/>
                         <br/>
                         <br/>
                         <div className="row" style={{marginLeft:'160px'}}>
@@ -180,7 +217,7 @@ export default class Header extends Component{
                           <Input.Password addonBefore={<Icon type="lock" />} placeholder="password" value={this.state.password} onChange={(e)=>{this.setState({password:e.target.value})}}/>
                           <br/>
                           <br/>
-                          <Button type="primary" block onClick={(e)=>{this.setState({loggedIn:true,visible:false})}}>
+                          <Button type="primary" block onClick={this.doSignInWithEmailAndPassword}>
                             LOGIN
                           </Button>
                         <br/>
