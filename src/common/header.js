@@ -32,6 +32,7 @@ export default class Header extends Component{
           type: 'customer',
           userID: '',
           userName: '',
+          userType: ''
         }
         firebase.initializeApp(firebaseConfig);
         this.handleClick = this.handleClick.bind(this);
@@ -55,7 +56,6 @@ export default class Header extends Component{
     };
   
     handleCancel = e => {
-      console.log(e);
       this.setState({
         visible: false,
 
@@ -63,22 +63,44 @@ export default class Header extends Component{
     };
     doCreateUserWithEmailAndPassword()
     {
-      this.auth.createUserWithEmailAndPassword(this.state.email,this.state.password)
+      this.auth.createUserWithEmailAndPassword(this.state.email,this.state.password);
     }
     doSignInWithEmailAndPassword = (e) =>
     {
       //firebase.initializeApp(firebaseConfig);
       this.auth.signInWithEmailAndPassword(this.state.email,this.state.password);
+      
+      sessionStorage.setItem('uid',this.auth.currentUser.uid);
+      var uid=sessionStorage.getItem('uid');
+      if(uid!= undefined || uid!='')
+      {
+        var dbRef= firebase.database().ref().child('Buyer').child(uid);
+        dbRef.on('value',snap=>sessionStorage.setItem('username',snap.val().username));
+        sessionStorage.setItem('type','customer');
+      }
+      if(sessionStorage.getItem('username')===undefined)
+      {
+        var dbRef= firebase.database().ref().child('Seller').child(uid);
+        dbRef.on('value',snap=>sessionStorage.setItem('username',snap.val().username));
+        sessionStorage.setItem('type','vendor');
+      }
+      if(sessionStorage.getItem('username')===undefined)
+      {
+        var dbRef= firebase.database().ref().child('Employee').child(uid);
+        dbRef.on('value',snap=>sessionStorage.setItem('username',snap.val().username));
+        sessionStorage.setItem('type','employee');
+      }
+      this.setState({userName:sessionStorage.getItem('username'),userType:sessionStorage.getItem('type')})
       message.success('Logged In');
       this.setState({loggedIn:true,visible:false,userID:this.auth.currentUser.uid});
-      sessionStorage.setItem('uid',this.state.userID);
-      var uid=sessionStorage.getItem('uid');
-      this.setState({userName:firebase.database.ref('/medicine-delivery-8cc6f/Buyer/'+uid+'/username')});
     }
 
     doSignOut = (e) =>{
       this.auth.signOut();
       this.setState({loggedIn:false})
+      sessionStorage.removeItem('uid');
+      sessionStorage.removeItem('username');
+      sessionStorage.removeItem('type');
     }
     componentWillMount()
     {
@@ -86,7 +108,7 @@ export default class Header extends Component{
       var uid=sessionStorage.getItem('uid');
       if(uid!=undefined)
       {
-        this.setState({userName:firebase.database.ref('/medicine-delivery-8cc6f/Buyer/'+uid+'/username')})
+        this.setState({userName:sessionStorage.getItem('username'),userType:sessionStorage.getItem('type'),loggedIn:true,visible:false,userID:this.auth.currentUser.uid})
       }
     }
     render()
@@ -142,7 +164,7 @@ export default class Header extends Component{
                       <li className="has-children">
                           <a><Icon type="user" style={{fontSize: '30px'}}/><Icon type="caret-down" style={{fontSize: '25px'}}/></a>
                           <ul className="dropdown" style={{marginLeft: '-70px'}}>
-                              <li><a href="javascript:void(0)">Howdy Derp!</a></li>
+                              <li><a href="javascript:void(0)">Howdy {this.state.userName!=undefined?this.state.userName.toUpperCase:'USER'}!</a></li>
                               <li><a href="javascript:void(0)">Dashboard</a></li>
                               <li onClick={this.doSignOut}><a href="javascript:void(0)">Sign Out</a></li>
                            </ul>
