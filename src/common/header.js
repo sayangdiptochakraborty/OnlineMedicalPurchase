@@ -67,32 +67,42 @@ export default class Header extends Component{
     }
     doSignInWithEmailAndPassword = (e) =>
     {
-      //firebase.initializeApp(firebaseConfig);
-      this.auth.signInWithEmailAndPassword(this.state.email,this.state.password);
-      
-      sessionStorage.setItem('uid',this.auth.currentUser.uid);
+      //firebase.initializeApp(firebaseConfig)
+      this.auth.signInWithEmailAndPassword(this.state.email,this.state.password).then(function(){
+        sessionStorage.setItem('uid',this.auth.currentUser.uid);
+        var uid=sessionStorage.getItem('uid');
+        if(uid!= undefined || uid!='')
+        {
+          var dbRef= firebase.database().ref().child('Buyer').child(uid);
+          dbRef.on('value',snap=>sessionStorage.setItem('username',snap.val().username));
+          sessionStorage.setItem('type','customer');
+        }
+        
+      }).catch(function(error)
+      {
+        message.error('Failed to Login')
+      })
       var uid=sessionStorage.getItem('uid');
-      if(uid!= undefined || uid!='')
+      if(uid!= null)
       {
-        var dbRef= firebase.database().ref().child('Buyer').child(uid);
-        dbRef.on('value',snap=>sessionStorage.setItem('username',snap.val().username));
-        sessionStorage.setItem('type','customer');
+        this.setState({userName:sessionStorage.getItem('username'),userType:sessionStorage.getItem('type')})
+        message.success('Logged In');
+        this.setState({loggedIn:true,visible:false,userID:this.auth.currentUser.uid});
       }
-      if(sessionStorage.getItem('username')===undefined)
-      {
-        var dbRef= firebase.database().ref().child('Seller').child(uid);
-        dbRef.on('value',snap=>sessionStorage.setItem('username',snap.val().username));
-        sessionStorage.setItem('type','vendor');
-      }
-      if(sessionStorage.getItem('username')===undefined)
-      {
-        var dbRef= firebase.database().ref().child('Employee').child(uid);
-        dbRef.on('value',snap=>sessionStorage.setItem('username',snap.val().username));
-        sessionStorage.setItem('type','employee');
-      }
-      this.setState({userName:sessionStorage.getItem('username'),userType:sessionStorage.getItem('type')})
-      message.success('Logged In');
-      this.setState({loggedIn:true,visible:false,userID:this.auth.currentUser.uid});
+      // var username=sessionStorage.getItem('username')
+      // if(username===undefined || username==='')
+      // {
+      //   var dbRef= firebase.database().ref().child('Seller').child(uid);
+      //   dbRef.on('value',snap=>sessionStorage.setItem('username',snap.val().username));
+      //   sessionStorage.setItem('type','vendor');
+      // }
+      // if(sessionStorage.getItem('username')===undefined)
+      // {
+      //   var dbRef= firebase.database().ref().child('Employee').child(uid);
+      //   dbRef.on('value',snap=>sessionStorage.setItem('username',snap.val().username));
+      //   sessionStorage.setItem('type','employee');
+      // }
+      
     }
 
     doSignOut = (e) =>{
