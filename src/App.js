@@ -10,13 +10,15 @@ import './common/css/style.css';
 import Home from './common/home';
 
 import Header from './common/header';
+import Cart from './common/cart';
 import Footer from './common/footer';
+import Checkout from './common/checkout';
 
 function App() {
   return (
     <div>
       <Header/>
-      <Home/>
+      <Checkout/>
       <Footer/>
     </div>
   );
