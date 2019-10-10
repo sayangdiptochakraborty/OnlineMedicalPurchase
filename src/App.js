@@ -13,12 +13,17 @@ import Header from './common/header';
 import Cart from './common/cart';
 import Footer from './common/footer';
 import Checkout from './common/checkout';
+import ThankYou from './common/thankyou';
+import About from './common/about';
+import Contact from './common/contact';
+import Shop from './common/shop';
+import Item from './common/item';
 
 function App() {
   return (
     <div>
       <Header/>
-      <Checkout/>
+      <Item/>
       <Footer/>
     </div>
   );
