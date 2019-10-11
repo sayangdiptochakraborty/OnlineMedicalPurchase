@@ -18,12 +18,13 @@ import About from './common/about';
 import Contact from './common/contact';
 import Shop from './common/shop';
 import Item from './common/item';
+import VendorDashboard from './common/vendorDashboard'
 
 function App() {
   return (
     <div>
       <Header/>
-      <Item/>
+      <VendorDashboard/>
       <Footer/>
     </div>
   );
