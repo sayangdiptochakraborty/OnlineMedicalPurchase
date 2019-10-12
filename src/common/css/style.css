@@ -1121,3 +1121,10 @@ a {
   {
     margin-left: 75px;
   }
+  .medDetail .ant-input-group-addon {
+    width:100px;
+  }
+  label.ant-radio-button-wrapper {
+    width: 149.5px;
+    text-align: center;
+}

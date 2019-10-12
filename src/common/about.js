@@ -1,4 +1,6 @@
 import React from 'react';
+import Header from './header';
+import Footer from './footer';
 export default class About extends React.Component
 {
     constructor(props)
@@ -9,6 +11,7 @@ export default class About extends React.Component
     {
         return(
             <div>
+              <Header/>
   <div className="site-blocks-cover inner-page" style={{backgroundImage: 'url("images/hero_1.jpg")'}}>
     <div className="container">
       <div className="row">
@@ -177,6 +180,7 @@ export default class About extends React.Component
       </div>
     </div>
   </div>
+  <Footer/>
 </div>
 
         )

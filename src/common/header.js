@@ -67,28 +67,29 @@ export default class Header extends Component{
     }
     doSignInWithEmailAndPassword = (e) =>
     {
-      //firebase.initializeApp(firebaseConfig)
-      this.auth.signInWithEmailAndPassword(this.state.email,this.state.password).then(function(){
-        sessionStorage.setItem('uid',this.auth.currentUser.uid);
-        var uid=sessionStorage.getItem('uid');
-        if(uid!= undefined || uid!='')
-        {
-          var dbRef= firebase.database().ref().child('Buyer').child(uid);
-          dbRef.on('value',snap=>sessionStorage.setItem('username',snap.val().username));
-          sessionStorage.setItem('type','customer');
-        }
+      this.setState({loggedIn:true,visible:false});
+      // //firebase.initializeApp(firebaseConfig)
+      // this.auth.signInWithEmailAndPassword(this.state.email,this.state.password).then(function(){
+      //   sessionStorage.setItem('uid',this.auth.currentUser.uid);
+      //   var uid=sessionStorage.getItem('uid');
+      //   if(uid!= undefined || uid!='')
+      //   {
+      //     var dbRef= firebase.database().ref().child('Buyer').child(uid);
+      //     dbRef.on('value',snap=>sessionStorage.setItem('username',snap.val().username));
+      //     sessionStorage.setItem('type','customer');
+      //   }
         
-      }).catch(function(error)
-      {
-        message.error('Failed to Login')
-      })
-      var uid=sessionStorage.getItem('uid');
-      if(uid!= null)
-      {
-        this.setState({userName:sessionStorage.getItem('username'),userType:sessionStorage.getItem('type')})
-        message.success('Logged In');
-        this.setState({loggedIn:true,visible:false,userID:this.auth.currentUser.uid});
-      }
+      // }).catch(function(error)
+      // {
+      //   message.error('Failed to Login')
+      // })
+      // var uid=sessionStorage.getItem('uid');
+      // if(uid!= null)
+      // {
+      //   this.setState({userName:sessionStorage.getItem('username'),userType:sessionStorage.getItem('type')})
+      //   message.success('Logged In');
+      //   this.setState({loggedIn:true,visible:false,userID:this.auth.currentUser.uid});
+      // }
       // var username=sessionStorage.getItem('username')
       // if(username===undefined || username==='')
       // {
@@ -138,23 +139,23 @@ export default class Header extends Component{
         <div className="d-flex align-items-center justify-content-between">
           <div className="logo">
             <div className="site-logo">
-              <a href="javascript:void(0)" className="js-logo-clone"><img width={50} height={50} src="/images/logo.png"/>&nbsp;&nbsp;GETMEDS</a>
+              <a href="/" className="js-logo-clone"><img width={50} height={50} src="/images/logo.png"/>&nbsp;&nbsp;GETMEDS</a>
             </div>
           </div>
           <div className="main-nav d-none d-lg-block">
             <nav className="site-navigation text-right text-md-center" role="navigation">
               <ul className="site-menu js-clone-nav d-none d-lg-block">
-                <li className="active"><a href="index.html">Home</a></li>
+                <li className="active"><a href="/">Home</a></li>
                 <li className="has-children">
                   <a>Store&nbsp;<Icon type="caret-down" style={{fontSize: '25px'}}/></a>
                   <ul className="dropdown">
-                    <li><a href="javascript:void(0)">Supplements</a></li>
-                    <li><a href="javascript:void(0)">Vitamins</a></li>
-                    <li><a href="javascript:void(0)">Diet &amp; Nutrition</a></li>
+                    <li><a href="/shop">Medicine</a></li>
+                    <li><a href="/shop">Diet</a></li>
+                    <li><a href="/shop">Supplement</a></li>
                   </ul>
                 </li>
-                <li><a href="javascript:void(0)">About</a></li>
-                <li><a href="javascript:void(0)">Contact</a></li>
+                <li><a href="/about">About</a></li>
+                <li><a href="/contact">Contact</a></li>
               </ul>
             </nav>
           </div>
@@ -162,7 +163,7 @@ export default class Header extends Component{
             <a href="javascript:void(0)" className="icons-btn d-inline-block"><Icon type="search" onClick={(e)=>{this.setState({search:true})}}style={{fontSize: '30px'}}/></a>
             &nbsp;
             &nbsp;
-            <a href="cart.html" className="icons-btn d-inline-block bag">
+            <a href="/cart" className="icons-btn d-inline-block bag">
               <Icon type="shopping-cart" style={{fontSize: '30px'}}/>
               {this.state.loggedIn?<span class="number"style={{marginTop: '-12px'}}>2</span>:null}
             </a>
@@ -175,7 +176,7 @@ export default class Header extends Component{
                           <a><Icon type="user" style={{fontSize: '30px'}}/><Icon type="caret-down" style={{fontSize: '25px'}}/></a>
                           <ul className="dropdown" style={{marginLeft: '-70px'}}>
                               <li><a href="javascript:void(0)">Howdy {this.state.userName!=undefined?this.state.userName.toUpperCase:'USER'}!</a></li>
-                              <li><a href="javascript:void(0)">Dashboard</a></li>
+                              <li><a href="/dashboard/vendor">Dashboard</a></li>
                               <li onClick={this.doSignOut}><a href="javascript:void(0)">Sign Out</a></li>
                            </ul>
                       </li>

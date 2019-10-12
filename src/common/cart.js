@@ -1,7 +1,8 @@
 import React, {Component} from 'react';
 import * as firebase from 'firebase';
 import 'antd/dist/antd.css';
-
+import Header from './header';
+import Footer from './footer';
 export default class Cart extends React.Component
 {
     constructor(props)
@@ -12,6 +13,7 @@ export default class Cart extends React.Component
     {
         return(
             <div>
+              <Header/>
                 <div className="bg-light py-3">
   <div className="container">
     <div className="row">
@@ -139,8 +141,7 @@ export default class Cart extends React.Component
             </div>
             <div className="row">
               <div className="col-md-12">
-                <button className="btn btn-primary btn-lg btn-block" onclick="window.location='checkout.html'">Proceed To
-                  Checkout</button>
+                <button className="btn btn-primary btn-lg btn-block"><a href="/checkout">Proceed To Checkout</a></button>
               </div>
             </div>
           </div>
@@ -149,6 +150,7 @@ export default class Cart extends React.Component
     </div>
   </div>
 </div>
+<Footer/>
 </div>
         )
     }

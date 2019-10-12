@@ -1,6 +1,8 @@
 import React, {Component} from 'react';
 import * as firebase from 'firebase';
 import 'antd/dist/antd.css';
+import Header from './header';
+import Footer from './footer';
 
 export default class Checkout extends React.Component
 {
@@ -19,6 +21,7 @@ export default class Checkout extends React.Component
     {
         return(
             <div>
+              <Header/>
                 <div className="bg-light py-3">
   <div className="container">
     <div className="row">
@@ -269,7 +272,7 @@ export default class Checkout extends React.Component
     {/* </form> */}
   </div>
 </div>
-
+<Footer/>
             </div>
         )
     }

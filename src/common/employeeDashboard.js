@@ -2,6 +2,8 @@ import React from 'react';
 import 'antd/dist/antd.css';
 import {Row,Col} from 'antd';
 import { Card, Icon, Button, Input, Upload, Divider } from 'antd';
+import Header from './header';
+import Footer from './footer';
 
 const { Meta } = Card;
 export default class EmployeeDashboard extends React.Component
@@ -24,6 +26,7 @@ export default class EmployeeDashboard extends React.Component
           );
         return(
             <div>
+                <Header/>
                 <div className="bg-light py-3">
                     <div className="container">
                         <div className="row">
@@ -82,22 +85,20 @@ export default class EmployeeDashboard extends React.Component
                 <br/>
                 <Row type="flex" justify="space-around">
                     <Col span={2}></Col>
-                    <Col span={6}><Card style={{height: 250}} hoverable cover={<Icon type="plus-circle" style={{fontSize: '100px',paddingTop: '20px'}}/>} onClick={(e)=>{this.setState({detailsVisible:true})}}><Meta title="Add Medicine" description="Add a medicine, vitamin or supplement in the shop alongwith all the details" /></Card></Col>
-                    <Col span={6}><Card style={{height: 250}} hoverable cover={<Icon type="bars" style={{fontSize: '100px',paddingTop: '20px'}}/>} onClick={(e)=>{this.setState({detailsVisible:true})}}><Meta title="View Medicines" description="Get a list of all your medicines, view and edit the items as per your need." /></Card></Col>
+                    <Col span={6}><Card style={{height: 220}} hoverable cover={<Icon type="team" style={{fontSize: '100px',paddingTop: '20px'}}/>} onClick={(e)=>{this.setState({detailsVisible:true,orderHistory:true})}}><Meta title="Manage Customers" description="View and manage all your vendors right here. Generate a report as per your need." /></Card></Col>
+                    <Col span={6}><Card style={{height: 220}} hoverable cover={<Icon type="shop" style={{fontSize: '100px',paddingTop: '20px'}}/>} onClick={(e)=>{this.setState({detailsVisible:true,vendorReport: true})}}><Meta title="Manage Vendors" description="View and manage all your vendors right here. Generate a report as per your need." /></Card></Col>
                     <Col span={2}></Col>
                 </Row>
                 <br/>
                 <br/>
                 <Row type="flex" justify="space-around">
-                    <Col span={2}></Col>
-                    <Col span={6}><Card style={{height: 250}} hoverable cover={<Icon type="file-done" style={{fontSize: '100px',paddingTop: '20px'}}/>} onClick={(e)=>{this.setState({detailsVisible:true})}}><Meta title="Orders and Report" description="Get a list of all your orders, download the report and revenue generated." /></Card></Col>
-                    <Col span={6}><Card style={{height: 250}} hoverable cover={<Icon type="setting" style={{fontSize: '100px',paddingTop: '20px'}}/>} onClick={(e)=>{this.setState({detailsVisible:true,settings:true})}}><Meta title="Settings" description="Change and update your profile settings." /></Card></Col>
-                    <Col span={2}></Col>
+                    <Col span={6}><Card style={{height: 220}} hoverable cover={<Icon type="setting" style={{fontSize: '100px',paddingTop: '20px'}}/>} onClick={(e)=>{this.setState({detailsVisible:true,settings:true})}}><Meta title="Settings" description="Change and update your profile settings." /></Card></Col>
                 </Row>
                 
                 </div>}
                 <br/>
                 <br/>
+            <Footer/>
             </div>
         )
     }

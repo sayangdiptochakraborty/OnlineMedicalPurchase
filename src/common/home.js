@@ -4,6 +4,8 @@ import { Card } from 'antd';
 import OwlCarousel from 'react-owl-carousel';
 import 'owl.carousel/dist/assets/owl.carousel.css';
 import 'owl.carousel/dist/assets/owl.theme.default.css';
+import Header from './header';
+import Footer from './footer';
 const { Meta } = Card;
 
 export default class Home extends Component
@@ -17,6 +19,7 @@ export default class Home extends Component
     {
         return(
             <div>
+              <Header/>
                 <div className="site-blocks-cover" style={{backgroundImage: 'url("images/hero_1.jpg")'}}>
                     <div className="container">
                         <div className="row">
@@ -25,7 +28,7 @@ export default class Home extends Component
                                     <h2 className="sub-title">Your doorstep medicine delivery partner</h2>
                                     <h1>Welcome To GetMeds</h1>
                                     <p>
-                                        <a href="javascript:void(0);" className="btn btn-primary px-5 py-3" >Shop Now</a>
+                                        <a href="/shop" className="btn btn-primary px-5 py-3" >Shop Now</a>
                                     </p>
                                 </div>
                             </div>
@@ -48,7 +51,7 @@ export default class Home extends Component
       <Card
     hoverable
     style={{ width: 240, height :410 }}
-    cover={<img alt="example" src="/images/delivery.png" />}
+    cover={<img alt="example" src="images/delivery.png" />}
   >
     <Meta title="Why walk to a chemist?" description="Get rid of the queues and walking. We are here to do that for you. Select a medicine and order instantly with the click of a button" />
   </Card>
@@ -57,7 +60,7 @@ export default class Home extends Component
       <Card
     hoverable
     style={{ width: 240, height :410 }}
-    cover={<img alt="example" src="/images/man.png" />}
+    cover={<img alt="example" src="images/man.png" />}
   >
     <Meta title="Savings Bonanza" description="Get the best discounts on medicines here. Upto 50% discount on purchase of Rs. 999 and above." />
   </Card>
@@ -75,41 +78,41 @@ export default class Home extends Component
     <div className="row">
       <div className="col-sm-6 col-lg-4 text-center item mb-4">
         <span className="tag">Sale</span>
-        <a href="shop-single.html"> <img src="images/product_01.png" alt="Image" /></a>
-        <h3 className="text-dark"><a href="shop-single.html">Bioderma</a></h3>
+        <a href="/item"> <img src="images/product_01.png" alt="Image" /></a>
+        <h3 className="text-dark"><a href="/item">Bioderma</a></h3>
         <p className="price"><del>$95.00</del> $55.00</p>
       </div>
       <div className="col-sm-6 col-lg-4 text-center item mb-4">
-        <a href="shop-single.html"> <img src="images/product_02.png" alt="Image" /></a>
-        <h3 className="text-dark"><a href="shop-single.html">Chanca Piedra</a></h3>
+        <a href="/item"> <img src="images/product_02.png" alt="Image" /></a>
+        <h3 className="text-dark"><a href="/item">Chanca Piedra</a></h3>
         <p className="price">$70.00</p>
       </div>
       <div className="col-sm-6 col-lg-4 text-center item mb-4">
-        <a href="shop-single.html"> <img src="images/product_03.png" alt="Image" /></a>
-        <h3 className="text-dark"><a href="shop-single.html">Umcka Cold Care</a></h3>
+        <a href="/item"> <img src="images/product_03.png" alt="Image" /></a>
+        <h3 className="text-dark"><a href="/item">Umcka Cold Care</a></h3>
         <p className="price">$120.00</p>
       </div>
       <div className="col-sm-6 col-lg-4 text-center item mb-4">
       <span className="tag">Sale</span>
-        <a href="shop-single.html"> <img src="images/product_04.png" alt="Image" /></a>
-        <h3 className="text-dark"><a href="shop-single.html">Cetyl Pure</a></h3>
+        <a href="/item"> <img src="images/product_04.png" alt="Image" /></a>
+        <h3 className="text-dark"><a href="/item">Cetyl Pure</a></h3>
         <p className="price"><del>$45.00</del> $20.00</p>
       </div>
       <div className="col-sm-6 col-lg-4 text-center item mb-4">
-        <a href="shop-single.html"> <img src="images/product_05.png" alt="Image" /></a>
-        <h3 className="text-dark"><a href="shop-single.html">CLA Core</a></h3>
+        <a href="/item"> <img src="images/product_05.png" alt="Image" /></a>
+        <h3 className="text-dark"><a href="/item">CLA Core</a></h3>
         <p className="price">$38.00</p>
       </div>
       <div className="col-sm-6 col-lg-4 text-center item mb-4">
         <span className="tag">Sale</span>
-        <a href="shop-single.html"> <img src="images/product_06.png" alt="Image" /></a>
-        <h3 className="text-dark"><a href="shop-single.html">Poo Pourri</a></h3>
+        <a href="/item"> <img src="images/product_06.png" alt="Image" /></a>
+        <h3 className="text-dark"><a href="/item">Poo Pourri</a></h3>
         <p className="price"><del>$89</del>  $38.00</p>
       </div>
     </div>
     <div className="row mt-5">
       <div className="col-12 text-center">
-        <a href="shop.html" className="btn btn-primary px-4 py-3" style={{color:'black'}}>View All Products</a>
+        <a href="/shop" className="btn btn-primary px-4 py-3" style={{color:'black'}}>View All Products</a>
       </div>
     </div>
   </div>
@@ -130,23 +133,23 @@ export default class Home extends Component
     dots={false}
 >
           <div className="text-center item mb-4">
-            <a href="shop-single.html"> <img src="images/product_03.png" alt="Image" /></a>
-            <h3 className="text-dark"><a href="shop-single.html">Umcka Cold Care</a></h3>
+            <a href="/item"> <img src="images/product_03.png" alt="Image" /></a>
+            <h3 className="text-dark"><a href="/item">Umcka Cold Care</a></h3>
             <p className="price">$120.00</p>
           </div>
           <div className="text-center item mb-4">
-            <a href="shop-single.html"> <img src="images/product_01.png" alt="Image" /></a>
-            <h3 className="text-dark"><a href="shop-single.html">Umcka Cold Care</a></h3>
+            <a href="/item"> <img src="images/product_01.png" alt="Image" /></a>
+            <h3 className="text-dark"><a href="/item">Umcka Cold Care</a></h3>
             <p className="price">$120.00</p>
           </div>
           <div className="text-center item mb-4">
-            <a href="shop-single.html"> <img src="images/product_02.png" alt="Image" /></a>
-            <h3 className="text-dark"><a href="shop-single.html">Umcka Cold Care</a></h3>
+            <a href="/item"> <img src="images/product_02.png" alt="Image" /></a>
+            <h3 className="text-dark"><a href="/item">Umcka Cold Care</a></h3>
             <p className="price">$120.00</p>
           </div>
           <div className="text-center item mb-4">
-            <a href="shop-single.html"> <img src="images/product_04.png" alt="Image" /></a>
-            <h3 className="text-dark"><a href="shop-single.html">Umcka Cold Care</a></h3>
+            <a href="/item"> <img src="images/product_04.png" alt="Image" /></a>
+            <h3 className="text-dark"><a href="/item">Umcka Cold Care</a></h3>
             <p className="price">$120.00</p>
           </div>
         </OwlCarousel>
@@ -203,6 +206,7 @@ export default class Home extends Component
     </div>
   </div>
 </div>
+<Footer/>
             </div>
         )
     }
