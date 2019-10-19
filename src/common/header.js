@@ -36,9 +36,8 @@ export default class Header extends Component{
         }
         firebase.initializeApp(firebaseConfig);
         this.handleClick = this.handleClick.bind(this);
-        
-
-        this.auth = firebase.auth();
+        this.doCreateUserWithEmailAndPassword = this.doCreateUserWithEmailAndPassword.bind(this);
+        this.doSignInWithEmailAndPassword = this.doSignInWithEmailAndPassword.bind(this)
     }
     handleClick(e) {
       this.refs.fileUploader.click();
@@ -63,54 +62,84 @@ export default class Header extends Component{
     };
     doCreateUserWithEmailAndPassword()
     {
-      this.auth.createUserWithEmailAndPassword(this.state.email,this.state.password);
+      firebase.auth().createUserWithEmailAndPassword(this.state.email,this.state.password).catch(function(error){
+        message.error(error.code+" : "+error.message);
+        return;
+      });
+      setTimeout(() => {
+        firebase.auth().signInWithEmailAndPassword(this.state.email,this.state.password).then(()=>{
+          sessionStorage.setItem('uid',firebase.auth().currentUser.uid);
+          if(this.state.type==='customer')
+        {
+          firebase.database().ref().child(`Buyer/${firebase.auth().currentUser.uid}`).set({
+            Address: this.state.address,
+            Phone: this.state.phone,
+            email: this.state.email,
+            username: this.state.name,
+            image: "default",
+          })
+          var dbRef = firebase.database().ref().child('Buyer').child(firebase.auth().currentUser.uid);
+          dbRef.on('value',snap=>sessionStorage.setItem('userDetails',JSON.stringify(snap.val())));
+          sessionStorage.setItem('type','customer');
+          document.location.reload();
+        }
+        else
+        {
+          firebase.database().ref().child(`Seller/${firebase.auth().currentUser.uid}`).set({
+            Shop_Address: this.state.address,
+            Shop_Phone: this.state.phone,
+            email: this.state.email,
+            Shop_Name: this.state.name,
+            image: "default",
+          })
+          var dbRef = firebase.database.ref().child('Seller').child(firebase.auth().currentUser.uid);
+          dbRef.on('value',snap=>sessionStorage.setItem('userDetails',JSON.stringify(snap.val())));
+          sessionStorage.setItem('type','vendor');
+          document.location.reload();
+        }
+        }).catch(function(error){
+          message.error(error.code+" : "+error.message);
+          return;
+        });
+      },2500)
     }
     doSignInWithEmailAndPassword = (e) =>
     {
-      this.setState({loggedIn:true,visible:false});
-      // //firebase.initializeApp(firebaseConfig)
-      // this.auth.signInWithEmailAndPassword(this.state.email,this.state.password).then(function(){
-      //   sessionStorage.setItem('uid',this.auth.currentUser.uid);
-      //   var uid=sessionStorage.getItem('uid');
-      //   if(uid!= undefined || uid!='')
-      //   {
-      //     var dbRef= firebase.database().ref().child('Buyer').child(uid);
-      //     dbRef.on('value',snap=>sessionStorage.setItem('username',snap.val().username));
-      //     sessionStorage.setItem('type','customer');
-      //   }
-        
-      // }).catch(function(error)
-      // {
-      //   message.error('Failed to Login')
-      // })
-      // var uid=sessionStorage.getItem('uid');
-      // if(uid!= null)
-      // {
-      //   this.setState({userName:sessionStorage.getItem('username'),userType:sessionStorage.getItem('type')})
-      //   message.success('Logged In');
-      //   this.setState({loggedIn:true,visible:false,userID:this.auth.currentUser.uid});
-      // }
-      // var username=sessionStorage.getItem('username')
-      // if(username===undefined || username==='')
-      // {
-      //   var dbRef= firebase.database().ref().child('Seller').child(uid);
-      //   dbRef.on('value',snap=>sessionStorage.setItem('username',snap.val().username));
-      //   sessionStorage.setItem('type','vendor');
-      // }
-      // if(sessionStorage.getItem('username')===undefined)
-      // {
-      //   var dbRef= firebase.database().ref().child('Employee').child(uid);
-      //   dbRef.on('value',snap=>sessionStorage.setItem('username',snap.val().username));
-      //   sessionStorage.setItem('type','employee');
-      // }
+      firebase.auth().signInWithEmailAndPassword(this.state.email,this.state.password).then(function(){
+        sessionStorage.setItem('uid',firebase.auth().currentUser.uid);
+        var uid=firebase.auth().currentUser.uid;
+        if(uid!=undefined || uid!='')
+        {
+          var dbRef = firebase.database.ref().child('Buyer').child(uid);
+          dbRef.on('value',snap=>sessionStorage.setItem('userDetails',JSON.stringify(snap.val())));
+          sessionStorage.setItem('type','customer');
+          document.location.reload();
+        }
+        if(sessionStorage.getItem('type')===undefined || sessionStorage.getItem('type')===null)
+        {
+          var dbRef = firebase.database.ref().child('Seller').child(uid);
+          dbRef.on('value',snap=>sessionStorage.setItem('userDetails',JSON.stringify(snap.val())));
+          sessionStorage.setItem('type','vendor');
+          document.location.reload();
+        }
+        if(sessionStorage.getItem('type')===undefined || sessionStorage.getItem('type')===null)
+        {
+          var dbRef = firebase.database.ref().child('Employee').child(uid);
+          dbRef.on('value',snap=>sessionStorage.setItem('userDetails',JSON.stringify(snap.val())));
+          sessionStorage.setItem('type','vendor');
+          document.location.reload();
+        }
+      }).catch(function(error){
+          message.error('Failed to Login');
+        })
       
     }
 
     doSignOut = (e) =>{
-      this.auth.signOut();
+      firebase.auth().signOut();
       this.setState({loggedIn:false})
       sessionStorage.removeItem('uid');
-      sessionStorage.removeItem('username');
+      sessionStorage.removeItem('userDetails');
       sessionStorage.removeItem('type');
     }
     componentWillMount()
@@ -119,7 +148,7 @@ export default class Header extends Component{
       var uid=sessionStorage.getItem('uid');
       if(uid!=undefined)
       {
-        this.setState({userName:sessionStorage.getItem('username'),userType:sessionStorage.getItem('type'),loggedIn:true,visible:false,userID:this.auth.currentUser.uid})
+        this.setState({loggedIn:true,visible:false})
       }
     }
     render()
@@ -216,7 +245,7 @@ export default class Header extends Component{
                         <Input addonBefore={<Icon type="environment" />} placeholder="12 Baker Street" value={this.state.address} onChange={(e)=>{this.setState({address:e.target.value})}}/>
                         <br/>
                         <br/>
-                        <div className="row" style={{marginLeft:'160px'}}>
+                        <div className="row" style={{marginLeft:'110px'}}>
 
                           <Radio.Group defaultValue="customer" buttonStyle="solid" style={{width:'100%'}} value={this.state.type} onChange={(e)=>{this.setState({type:e.target.value})}}>
                           <Radio.Button value="customer">Customer</Radio.Button>
@@ -226,7 +255,7 @@ export default class Header extends Component{
                         <br/>
                         <br/>
                         
-                        <Button type="primary" block>
+                        <Button type="primary" block onClick={this.doCreateUserWithEmailAndPassword}>
                           REGISTER
                         </Button>
                         <br/>
