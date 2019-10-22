@@ -20,7 +20,7 @@ export default class Footer extends React.Component
         <a href="#" className="banner-1 h-100 d-flex" style={{backgroundImage: 'url("http://localhost:3000/images/bg_1.jpg")'}}>
           <div className="banner-1-inner align-self-center">
             <h2>Pharma Products</h2>
-            <p>Get all your pharacy products right under one roof. All our products are personally verified for quality, validity and health before they are sent to you.
+            <p>Get all your pharmacy products right under one roof. All our products are personally verified for quality, validity and health before they are sent to you.
             </p>
           </div>
         </a>

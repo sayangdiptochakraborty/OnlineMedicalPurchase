@@ -1,6 +1,8 @@
 import React from 'react';
 import Header from './header';
 import Footer from './footer';
+import 'antd/dist/antd.css';
+import {Icon} from 'antd';
 export default class About extends React.Component
 {
     constructor(props)
@@ -31,7 +33,6 @@ export default class About extends React.Component
           <div className="block-16">
             <figure>
               <img src="images/bg_1.jpg" alt="Image placeholder" className="img-fluid rounded" />
-              <a href="https://vimeo.com/channels/staffpicks/93951774" className="play-button popup-vimeo"><span className="icon-play" /></a>
             </figure>
           </div>
         </div>
@@ -56,7 +57,6 @@ export default class About extends React.Component
           <div className="block-16">
             <figure>
               <img src="images/hero_1.jpg" alt="Image placeholder" className="img-fluid rounded" />
-              <a href="https://vimeo.com/channels/staffpicks/93951774" className="play-button popup-vimeo"><span className="icon-play" /></a>
             </figure>
           </div>
         </div>
@@ -73,12 +73,12 @@ export default class About extends React.Component
       </div>
     </div>
   </div>
-  <div className="site-section site-section-sm site-blocks-1 border-0  aos-init aos-animate" data-aos="fade">
+  <div className="site-section site-section-sm site-blocks-1 border-0 aos-init aos-animate" data-aos="fade">
     <div className="container">
       <div className="row">
-        <div className="col-md-6 col-lg-4 d-lg-flex mb-4 mb-lg-0 pl-4" data-aos="fade-up" data-aos-delay>
+        <div className="col-md-6 col-lg-4 d-lg-flex mb-4 mb-lg-0 pl-4 aos-init aos-animate" data-aos="fade-up" data-aos-delay>
           <div className="icon mr-4 align-self-start">
-            <span className="icon-truck text-primary" />
+            <Icon type="medicine-box" style={{fontSize: '30px'}}/>
           </div>
           <div className="text">
             <h2>Free Shipping</h2>
@@ -86,9 +86,9 @@ export default class About extends React.Component
               tincidunt fringilla.</p>
           </div>
         </div>
-        <div className="col-md-6 col-lg-4 d-lg-flex mb-4 mb-lg-0 pl-4" data-aos="fade-up" data-aos-delay={100}>
+        <div className="col-md-6 col-lg-4 d-lg-flex mb-4 mb-lg-0 pl-4 aos-init aos-animate" data-aos="fade-up" data-aos-delay={100}>
           <div className="icon mr-4 align-self-start">
-            <span className="icon-refresh2 text-primary" />
+            <Icon type="reload" style={{fontSize: '30px'}}/>
           </div>
           <div className="text">
             <h2>Free Returns</h2>
@@ -96,9 +96,9 @@ export default class About extends React.Component
               tincidunt fringilla.</p>
           </div>
         </div>
-        <div className="col-md-6 col-lg-4 d-lg-flex mb-4 mb-lg-0 pl-4" data-aos="fade-up" data-aos-delay={200}>
+        <div className="col-md-6 col-lg-4 d-lg-flex mb-4 mb-lg-0 pl-4 aos-init aos-animate" data-aos="fade-up" data-aos-delay={200}>
           <div className="icon mr-4 align-self-start">
-            <span className="icon-help text-primary" />
+            <Icon type="customer-service" style={{fontSize: '30px'}}/>
           </div>
           <div className="text">
             <h2>Customer Support</h2>

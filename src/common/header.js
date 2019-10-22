@@ -33,6 +33,7 @@ export default class Header extends Component{
           userID: '',
           userName: '',
           userType: '',
+          cartItems: 0,
         }
         if(!firebase.apps.length)
         {
@@ -177,7 +178,6 @@ export default class Header extends Component{
       if(uid!=undefined)
       {
         this.setState({loggedIn:true,visible:false})
-        
       }
     }
     render()
@@ -189,7 +189,6 @@ export default class Header extends Component{
         if(type==='vendor')
         {
           Name = JSON.parse(sessionStorage.getItem('userDetails')).Shop_Name;
-          console.log(Name)
         }
         else
         {
