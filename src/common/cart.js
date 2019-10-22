@@ -18,7 +18,7 @@ export default class Cart extends React.Component
   <div className="container">
     <div className="row">
       <div className="col-md-12 mb-0">
-        <a href="index.html">Home</a> <span className="mx-2 mb-0">/</span> 
+        <a href="/">Home</a> <span className="mx-2 mb-0">/</span> 
         <strong className="text-black">Cart</strong>
       </div>
     </div>
@@ -63,7 +63,7 @@ export default class Cart extends React.Component
                   </div>
                 </td>
                 <td>$49.00</td>
-                <td><a href="#" className="btn btn-primary height-auto btn-sm">X</a></td>
+                <td><a href="javascript:void(0)" className="btn btn-primary height-auto btn-sm">X</a></td>
               </tr>
               <tr>
                 <td className="product-thumbnail">

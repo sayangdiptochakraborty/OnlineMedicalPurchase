@@ -170,34 +170,28 @@ export default class Home extends Component
           <div className="testimony">
             <blockquote>
               <img src="images/person_1.jpg" alt="Image" className="img-fluid w-25 mb-4 rounded-circle" />
-              <p>“Lorem ipsum dolor, sit amet consectetur adipisicing elit. Nemo omnis voluptatem consectetur quam tempore obcaecati maiores voluptate aspernatur iusto eveniet, placeat ab quod tenetur ducimus. Minus ratione sit quaerat unde.”</p>
+              <p>“My mother lives alone during the day. With GetMeds 30 minutes delivery I can order her medicines sitting at office and relax.”</p>
             </blockquote>
             <p>— Kelly Holmes</p>
           </div>
           <div className="testimony">
             <blockquote>
               <img src="images/person_2.jpg" alt="Image" className="img-fluid w-25 mb-4 rounded-circle" />
-              <p>“Lorem ipsum dolor, sit amet consectetur adipisicing elit. Nemo omnis voluptatem consectetur quam tempore
-                obcaecati maiores voluptate aspernatur iusto eveniet, placeat ab quod tenetur ducimus. Minus ratione sit quaerat
-                unde.”</p>
+              <p>“My sister has a rare case of neurological paralysis. The drug she takes isn't available at local pharmacies. I am relieved that GetMeds delivers the product weekly to her. Cheers!”</p>
             </blockquote>
             <p>— Rebecca Morando</p>
           </div>
           <div className="testimony">
             <blockquote>
               <img src="images/person_3.jpg" alt="Image" className="img-fluid w-25 mb-4 rounded-circle" />
-              <p>“Lorem ipsum dolor, sit amet consectetur adipisicing elit. Nemo omnis voluptatem consectetur quam tempore
-                obcaecati maiores voluptate aspernatur iusto eveniet, placeat ab quod tenetur ducimus. Minus ratione sit quaerat
-                unde.”</p>
+              <p>“The best part about GetMeds is its 24 x 7 availability. I was really sick one night and knew the local medicos would be closed. GetMeds came to my rescue and I got my medicine within 30 minutes.”</p>
             </blockquote>
             <p>— Lucas Gallone</p>
           </div>
           <div className="testimony">
             <blockquote>
               <img src="images/person_4.jpg" alt="Image" className="img-fluid w-25 mb-4 rounded-circle" />
-              <p>“Lorem ipsum dolor, sit amet consectetur adipisicing elit. Nemo omnis voluptatem consectetur quam tempore
-                obcaecati maiores voluptate aspernatur iusto eveniet, placeat ab quod tenetur ducimus. Minus ratione sit quaerat
-                unde.”</p>
+              <p>“I have stopped going to medicine shops altogether. With monthly and weekly subscriptions I don't even have to worry about running out of medicines. Kudos to GetMeds.”</p>
             </blockquote>
             <p>— Andrew Neel</p>
           </div>

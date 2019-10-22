@@ -32,9 +32,12 @@ export default class Header extends Component{
           type: 'customer',
           userID: '',
           userName: '',
-          userType: ''
+          userType: '',
         }
-        firebase.initializeApp(firebaseConfig);
+        if(!firebase.apps.length)
+        {
+          firebase.initializeApp(firebaseConfig);
+        }
         this.handleClick = this.handleClick.bind(this);
         this.doCreateUserWithEmailAndPassword = this.doCreateUserWithEmailAndPassword.bind(this);
         this.doSignInWithEmailAndPassword = this.doSignInWithEmailAndPassword.bind(this)
@@ -62,14 +65,24 @@ export default class Header extends Component{
     };
     doCreateUserWithEmailAndPassword()
     {
+      if(this.state.email===''||this.state.phone===''||this.state.name===''||this.state.address==='')
+      {
+        message.error("Please input all fields.");
+        return;
+      }
+      if(this.state.password.length<6)
+      {
+        message.error("Password should have at least 6 characters.");
+        return;
+      }
       firebase.auth().createUserWithEmailAndPassword(this.state.email,this.state.password).catch(function(error){
         message.error(error.code+" : "+error.message);
         return;
       });
       setTimeout(() => {
         firebase.auth().signInWithEmailAndPassword(this.state.email,this.state.password).then(()=>{
-          sessionStorage.setItem('uid',firebase.auth().currentUser.uid);
-          if(this.state.type==='customer')
+        sessionStorage.setItem('uid',firebase.auth().currentUser.uid);
+        if(this.state.type==='customer')
         {
           firebase.database().ref().child(`Buyer/${firebase.auth().currentUser.uid}`).set({
             Address: this.state.address,
@@ -77,24 +90,32 @@ export default class Header extends Component{
             email: this.state.email,
             username: this.state.name,
             image: "default",
+          }).then(()=>{
+            var dbRef = firebase.database().ref().child('Buyer').child(firebase.auth().currentUser.uid);
+            dbRef.on('value',snap=>sessionStorage.setItem('userDetails',JSON.stringify(snap.val())));
+            sessionStorage.setItem('type','customer');
+            document.location.reload();
+          }).catch(function(error){
+            message.log(error.message);
           })
-          var dbRef = firebase.database().ref().child('Buyer').child(firebase.auth().currentUser.uid);
-          dbRef.on('value',snap=>sessionStorage.setItem('userDetails',JSON.stringify(snap.val())));
-          sessionStorage.setItem('type','customer');
-          document.location.reload();
+          
         }
-        else
+        if(this.state.type==='vendor')
         {
           firebase.database().ref().child(`Seller/${firebase.auth().currentUser.uid}`).set({
             Shop_Address: this.state.address,
             Shop_Phone: this.state.phone,
             email: this.state.email,
             Shop_Name: this.state.name,
+            username: this.state.name,
             image: "default",
+          }).then(()=>{
+            var dbRef = firebase.database().ref().child('Seller').child(firebase.auth().currentUser.uid);
+            dbRef.on('value',snap=>sessionStorage.setItem('userDetails',JSON.stringify(snap.val())));
+            sessionStorage.setItem('type','vendor');
+          }).catch(function(error){
+            message.log(error.message);
           })
-          var dbRef = firebase.database.ref().child('Seller').child(firebase.auth().currentUser.uid);
-          dbRef.on('value',snap=>sessionStorage.setItem('userDetails',JSON.stringify(snap.val())));
-          sessionStorage.setItem('type','vendor');
           document.location.reload();
         }
         }).catch(function(error){
@@ -105,30 +126,36 @@ export default class Header extends Component{
     }
     doSignInWithEmailAndPassword = (e) =>
     {
-      firebase.auth().signInWithEmailAndPassword(this.state.email,this.state.password).then(function(){
+      firebase.auth().signInWithEmailAndPassword(this.state.email,this.state.password).then(()=>{
         sessionStorage.setItem('uid',firebase.auth().currentUser.uid);
-        var uid=firebase.auth().currentUser.uid;
-        if(uid!=undefined || uid!='')
-        {
-          var dbRef = firebase.database.ref().child('Buyer').child(uid);
-          dbRef.on('value',snap=>sessionStorage.setItem('userDetails',JSON.stringify(snap.val())));
-          sessionStorage.setItem('type','customer');
+        var dbRef = firebase.database().ref().child('Buyer');
+        dbRef.once('value').then(function(snapshot){
+          if(snapshot.child(firebase.auth().currentUser.uid).val()===null)
+          {
+            var ref = firebase.database().ref().child('Seller')
+            ref.once('value').then(function(snap){ 
+              if(snap.child(firebase.auth().currentUser.uid).val()===null)
+              {
+                var refE = firebase.database().ref().child('Employee')
+                refE.once('value').then(function(snapp){
+                  sessionStorage.setItem('userDetails',JSON.stringify(snapp.child(firebase.auth().currentUser.uid).val()));
+                  sessionStorage.setItem('type','employee')
+                }) 
+              }
+              else
+              {
+                sessionStorage.setItem('userDetails',JSON.stringify(snap.child(firebase.auth().currentUser.uid).val()));
+                sessionStorage.setItem('type','vendor')
+              }
+            })
+          }
+          else
+          {
+            sessionStorage.setItem('userDetails',JSON.stringify(snapshot.child(firebase.auth().currentUser.uid).val()));
+            sessionStorage.setItem('type','customer');
+          }
           document.location.reload();
-        }
-        if(sessionStorage.getItem('type')===undefined || sessionStorage.getItem('type')===null)
-        {
-          var dbRef = firebase.database.ref().child('Seller').child(uid);
-          dbRef.on('value',snap=>sessionStorage.setItem('userDetails',JSON.stringify(snap.val())));
-          sessionStorage.setItem('type','vendor');
-          document.location.reload();
-        }
-        if(sessionStorage.getItem('type')===undefined || sessionStorage.getItem('type')===null)
-        {
-          var dbRef = firebase.database.ref().child('Employee').child(uid);
-          dbRef.on('value',snap=>sessionStorage.setItem('userDetails',JSON.stringify(snap.val())));
-          sessionStorage.setItem('type','vendor');
-          document.location.reload();
-        }
+        })
       }).catch(function(error){
           message.error('Failed to Login');
         })
@@ -141,18 +168,34 @@ export default class Header extends Component{
       sessionStorage.removeItem('uid');
       sessionStorage.removeItem('userDetails');
       sessionStorage.removeItem('type');
+      document.location.reload();
     }
-    componentWillMount()
+    async componentDidMount()
     {
       //firebase.initializeApp(firebaseConfig);
       var uid=sessionStorage.getItem('uid');
       if(uid!=undefined)
       {
         this.setState({loggedIn:true,visible:false})
+        
       }
     }
     render()
     {
+      if(this.state.loggedIn)
+      {
+        var Name='USER';
+        var type=sessionStorage.getItem('type')
+        if(type==='vendor')
+        {
+          Name = JSON.parse(sessionStorage.getItem('userDetails')).Shop_Name;
+          console.log(Name)
+        }
+        else
+        {
+          Name = JSON.parse(sessionStorage.getItem('userDetails')).username;
+        }
+      }
         return(
             <div className="site-navbar py-2">
               <div className={this.state.search?"search-wrap active":"search-wrap"}>
@@ -192,10 +235,10 @@ export default class Header extends Component{
             <a href="javascript:void(0)" className="icons-btn d-inline-block"><Icon type="search" onClick={(e)=>{this.setState({search:true})}}style={{fontSize: '30px'}}/></a>
             &nbsp;
             &nbsp;
-            <a href="/cart" className="icons-btn d-inline-block bag">
+            {type==='vendor'||type=='employee'?null:<a href="/cart" className="icons-btn d-inline-block bag">
               <Icon type="shopping-cart" style={{fontSize: '30px'}}/>
-              {this.state.loggedIn?<span class="number"style={{marginTop: '-12px'}}>2</span>:null}
-            </a>
+              <span class="number"style={{marginTop: '-12px'}}>2</span>
+            </a>}
             <a href="javascript:void(0)" className="site-menu-toggle js-menu-toggle ml-3 d-inline-block d-lg-none"><span className="icon-menu" /></a>
           </div>
           <div className="login">
@@ -204,8 +247,8 @@ export default class Header extends Component{
                       <li className="has-children">
                           <a><Icon type="user" style={{fontSize: '30px'}}/><Icon type="caret-down" style={{fontSize: '25px'}}/></a>
                           <ul className="dropdown" style={{marginLeft: '-70px'}}>
-                              <li><a href="javascript:void(0)">Howdy {this.state.userName!=undefined?this.state.userName.toUpperCase:'USER'}!</a></li>
-                              <li><a href="/dashboard/vendor">Dashboard</a></li>
+                              <li><a href="javascript:void(0)">Howdy {Name}!</a></li>
+                              <li><a href={type==='customer'?"/dashboard/user":type==='vendor'?"/dashboard/vendor":"/dashboard/employee"}>Dashboard</a></li>
                               <li onClick={this.doSignOut}><a href="javascript:void(0)">Sign Out</a></li>
                            </ul>
                       </li>
@@ -246,7 +289,6 @@ export default class Header extends Component{
                         <br/>
                         <br/>
                         <div className="row" style={{marginLeft:'110px'}}>
-
                           <Radio.Group defaultValue="customer" buttonStyle="solid" style={{width:'100%'}} value={this.state.type} onChange={(e)=>{this.setState({type:e.target.value})}}>
                           <Radio.Button value="customer">Customer</Radio.Button>
                           <Radio.Button value="vendor">Vendor</Radio.Button>
