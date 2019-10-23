@@ -68,7 +68,7 @@ export default class Home extends Component
     </div>
   </div>
 </div>
-<div className="site-section">
+{/* <div className="site-section">
   <div className="container">
     <div className="row">
       <div className="title-section text-center col-12">
@@ -156,7 +156,7 @@ export default class Home extends Component
       </div>
     </div>
   </div>
-</div>
+</div> */}
 <div className="site-section">
   <div className="container">
     <div className="row">

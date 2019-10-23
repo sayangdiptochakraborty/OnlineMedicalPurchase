@@ -1,6 +1,15 @@
 import React from 'react';
 import Header from './header';
 import Footer from './footer';
+import 'antd/dist/antd.css';
+import { Empty } from 'antd';
+import * as firebase from 'firebase';
+import firebaseConfig from './firebaseConfig';
+import 'firebase/auth';
+import 'firebase/database';
+import { Select } from 'antd';
+
+const { Option } = Select;
 export default class Item extends React.Component
 {
     constructor(props)
@@ -8,108 +17,105 @@ export default class Item extends React.Component
         super(props)
         this.state={
             specs: false,
+            item: [],
+            count: 1,
+            loggedIn: false,
+            selectedShop: ''
         }
+        if(!firebase.apps.length)
+        {
+          firebase.initializeApp(firebaseConfig);
+        }
+        this.addToCart = this.addToCart.bind(this)
+    }
+    onclick(type){
+      this.setState(prevState => {
+         return {count: type == 'add' ? prevState.count + 1: prevState.count!=1 ? prevState.count - 1 : 1}
+      });
+    }
+
+    addToCart = (e) =>{
+      if(this.state.loggedIn)
+      {
+        console.log(e)
+      }
+      else
+      {
+        console.log(e)
+      }
+    }
+
+    async componentDidMount()
+    {
+      var dbRef = firebase.database().ref().child('Medicine');
+      dbRef.once('value',snapshot=>{
+        var itemName=window.location.href.substring(window.location.href.lastIndexOf('/') + 1)
+        this.setState({item:snapshot.child(itemName).val()})
+      })
+      if(sessionStorage.getItem('uid')!=undefined)
+      {
+        this.setState({loggedIn:true})
+      }
     }
     render()
     {
+      var shop =[]
+      if(this.state.item!=null)
+      {
+        if(this.state.item.Shop!=undefined)
+        {
+          var json =this.state.item.Shop;
+          Object.keys(json).forEach(function(key) {
+            shop.push(json[key]);
+          });
+        }
+      }
+      
         return(
             <div>
               <Header/>
   <div className="bg-light py-3">
     <div className="container">
       <div className="row">
-        <div className="col-md-12 mb-0"><a href="/">Home</a> <span className="mx-2 mb-0">/</span> <a href="/shop">Store</a> <span className="mx-2 mb-0">/</span> <strong className="text-black">Ibuprofen Tablets, 200mg</strong></div>
+        <div className="col-md-12 mb-0"><a href="/">Home</a> <span className="mx-2 mb-0">/</span> <a href="/shop">Store</a> <span className="mx-2 mb-0">/</span> <strong className="text-black">{this.state.item!=null?this.state.item.Info!=undefined?this.state.item.Info.Name:null:null}</strong></div>
       </div>
     </div>
   </div>
   <div className="site-section">
     <div className="container">
-      <div className="row">
+    {this.state.item!=null?this.state.item.Info!=undefined?<div className="row">
         <div className="col-md-5 mr-auto">
           <div className="border text-center">
-            <img src="images/product_07_large.png" alt="Image" className="img-fluid p-5" />
+            <img src={this.state.item.Info!=undefined ?this.state.item.Info.Type==='Tablet'?"http://localhost:3000/images/tablet.jpg":"http://localhost:3000/images/syrup.png":null} alt="Image" className="img-fluid p-5" />
           </div>
         </div>
         <div className="col-md-6">
-          <h2 className="text-black">Ibuprofen Tablets, 200mg</h2>
-          <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Pariatur, vitae, explicabo? Incidunt facere, natus
-            soluta dolores iusto! Molestiae expedita veritatis nesciunt doloremque sint asperiores fuga voluptas,
-            distinctio, aperiam, ratione dolore.</p>
-          <p><del>$95.00</del>  <strong className="text-primary h4">$55.00</strong></p>
+          <h2 className="text-black">{this.state.item.Info!=undefined ?this.state.item.Info.Name:null}</h2>
+          <p>Select Your Preferred Store.
+            <br/>
+            <br/>
+            <Select style={{ width: 300 }} onChange={(e)=>{this.setState({selectedShop:e})}} placeholder="Preferred Shop">
+              {shop.map((item)=>{
+                return <Option value={item.Name}>{item.Name}</Option>
+              })}
+            </Select>
+            </p>
+          <p><strong className="text-primary h4">₹{this.state.item.Info!=undefined ?parseInt(this.state.item.Info.Price)*this.state.count:null}</strong></p>
           <div className="mb-5">
             <div className="input-group mb-3" style={{maxWidth: '220px'}}>
               <div className="input-group-prepend">
-                <button className="btn btn-outline-primary js-btn-minus" type="button">−</button>
+                <button className="btn btn-outline-primary js-btn-minus" type="button" onClick={this.onclick.bind(this, 'sub')} value='Dec'>−</button>
               </div>
-              <input type="text" className="form-control text-center" defaultValue={1} placeholder aria-label="Example text with button addon" aria-describedby="button-addon1" />
+              <input type="text" className="form-control text-center" value={this.state.count} placeholder aria-label="Example text with button addon" aria-describedby="button-addon1" />
               <div className="input-group-append">
-                <button className="btn btn-outline-primary js-btn-plus" type="button">+</button>
+                <button className="btn btn-outline-primary js-btn-plus" type="button" onClick={this.onclick.bind(this, 'add')} value='Inc'>+</button>
               </div>
             </div>
           </div>
-          <p><a href="cart.html" className="buy-now btn btn-sm height-auto px-4 py-3 btn-primary">Add To Cart</a></p>
-          <div className="mt-5">
-            <ul className="nav nav-pills mb-3 custom-pill" id="pills-tab" role="tablist">
-              <li className="nav-item">
-                <a className={this.state.specs?"nav-link":"nav-link active show"} id="pills-home-tab" role="tab" onClick={(e)=>{this.setState({specs:false})}}>Ordering Information</a>
-              </li>
-              <li className="nav-item">
-                <a className={this.state.specs?"nav-link active show":"nav-link"} id="pills-profile-tab" role="tab" onClick={(e)=>{this.setState({specs:true})}}>Specifications</a>
-              </li>
-            </ul>
-            <div className="tab-content" id="pills-tabContent">
-              <div className={this.state.specs?"tab-pane fade":"tab-pane fade show active"} id="pills-home" role="tabpanel" aria-labelledby="pills-home-tab">
-                <table className="table custom-table">
-                  <thead>
-                    <tr><th>Material</th>
-                      <th>Description</th>
-                      <th>Packaging</th>
-                    </tr></thead>
-                  <tbody>
-                    <tr>
-                      <th scope="row">OTC022401</th>
-                      <td>Pain Management: Acetaminophen PM Extra-Strength Caplets, 500 mg, 100/Bottle</td>
-                      <td>1 BT</td>
-                    </tr>
-                    <tr>
-                      <th scope="row">OTC022401</th>
-                      <td>Pain Management: Acetaminophen PM Extra-Strength Caplets, 500 mg, 100/Bottle</td>
-                      <td>144/CS</td>
-                    </tr>
-                    <tr>
-                      <th scope="row">OTC022401</th>
-                      <td>Pain Management: Acetaminophen PM Extra-Strength Caplets, 500 mg, 100/Bottle</td>
-                      <td>1 EA</td>
-                    </tr>
-                  </tbody>
-                </table>
-              </div>
-              <div className={this.state.specs?"tab-pane fade active show":"tab-pane fade"} id="pills-profile" role="tabpanel" aria-labelledby="pills-profile-tab">
-                <table className="table custom-table">
-                  <tbody>
-                    <tr>
-                      <td>HPIS CODE</td>
-                      <td className="bg-light">999_200_40_0</td>
-                    </tr>
-                    <tr>
-                      <td>HEALTHCARE PROVIDERS ONLY</td>
-                      <td className="bg-light">No</td>
-                    </tr>
-                    <tr>
-                      <td>LATEX FREE</td>
-                      <td className="bg-light">Yes, No</td>
-                    </tr>
-                    <tr>
-                      <td>MEDICATION ROUTE</td>
-                      <td className="bg-light">Topical</td>
-                    </tr>
-                  </tbody>
-                </table>
-              </div>
-            </div>
-          </div>
+          <p><a className="buy-now btn btn-sm height-auto px-4 py-3 btn-primary" style={{color:'black'}} onClick={this.addToCart}>Add To Cart</a></p>
         </div>
-      </div>
+      </div>:<Empty description={<span>No Medicine Found</span>}/>:<Empty description={<span>No Medicine Found</span>}/>}
+      
     </div>
   </div>
   <Footer/>

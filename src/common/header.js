@@ -34,6 +34,7 @@ export default class Header extends Component{
           userName: '',
           userType: '',
           cartItems: 0,
+          searchVal: ''
         }
         if(!firebase.apps.length)
         {
@@ -41,7 +42,8 @@ export default class Header extends Component{
         }
         this.handleClick = this.handleClick.bind(this);
         this.doCreateUserWithEmailAndPassword = this.doCreateUserWithEmailAndPassword.bind(this);
-        this.doSignInWithEmailAndPassword = this.doSignInWithEmailAndPassword.bind(this)
+        this.doSignInWithEmailAndPassword = this.doSignInWithEmailAndPassword.bind(this);
+        this.keyPress = this.keyPress.bind(this);
     }
     handleClick(e) {
       this.refs.fileUploader.click();
@@ -171,6 +173,14 @@ export default class Header extends Component{
       sessionStorage.removeItem('type');
       document.location.reload();
     }
+    keyPress = (e) => {
+      if(e.keyCode===13)
+      {
+        var searchVal=this.state.searchVal;
+        searchVal=searchVal.toUpperCase()[0]+searchVal.toLowerCase().substring(1);
+        window.location.href = 'http://localhost:3000/item/'+searchVal;
+      }
+    }
     async componentDidMount()
     {
       //firebase.initializeApp(firebaseConfig);
@@ -201,9 +211,7 @@ export default class Header extends Component{
           <div className="container">
             <a className="search-close js-search-close" style={{right:'80px'}}><input ref="fileUploader" type="file" style={{display:"none"}}/><Icon type="camera" style={{fontSize: '30px'}} onClick={this.handleClick}/></a>
             <a href="javascript:void(0)" className="search-close js-search-close"><Icon type="close" style={{fontSize: '30px'}} onClick={(e)=>{this.setState({search:false})}}/></a>
-            <form action="#" method="post">
-              <input type="text" className="form-control" placeholder="Search your medicine and hit enter..." />
-            </form>
+              <input type="text" className="form-control" placeholder="Search your medicine and hit enter..." value={this.state.searchVal} onChange={(e)=>{this.setState({searchVal:e.target.value})}} onKeyDown={this.keyPress}/>
           </div>
         </div>
         <div className="container">
@@ -217,14 +225,7 @@ export default class Header extends Component{
             <nav className="site-navigation text-right text-md-center" role="navigation">
               <ul className="site-menu js-clone-nav d-none d-lg-block">
                 <li className="active"><a href="/">Home</a></li>
-                <li className="has-children">
-                  <a>Store&nbsp;<Icon type="caret-down" style={{fontSize: '25px'}}/></a>
-                  <ul className="dropdown">
-                    <li><a href="/shop">Medicine</a></li>
-                    <li><a href="/shop">Diet</a></li>
-                    <li><a href="/shop">Supplement</a></li>
-                  </ul>
-                </li>
+                <li><a href="/shop">Store</a></li>
                 <li><a href="/about">About</a></li>
                 <li><a href="/contact">Contact</a></li>
               </ul>
