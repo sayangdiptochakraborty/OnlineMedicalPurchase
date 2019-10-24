@@ -6,12 +6,20 @@ export default class Contact extends React.Component
     constructor(props)
     {
         super(props)
+        this.state={
+          activeItem: {
+            homeActive: false,
+            storeActive:false,
+            contactActive: true,
+            aboutActive: false,
+          },
+        }
     }
     render()
     {
         return(
             <div>
-              <Header/>
+              <Header activeItem={this.state.activeItem}/>
   <div className="bg-light py-3">
     <div className="container">
       <div className="row">

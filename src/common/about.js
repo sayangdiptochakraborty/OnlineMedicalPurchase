@@ -8,12 +8,20 @@ export default class About extends React.Component
     constructor(props)
     {
         super(props)
+        this.state={
+          activeItem: {
+            homeActive: false,
+            storeActive:false,
+            contactActive: false,
+            aboutActive: true,
+          },
+        }
     }
     render()
     {
         return(
             <div>
-              <Header/>
+              <Header activeItem={this.state.activeItem}/>
   <div className="site-blocks-cover inner-page" style={{backgroundImage: 'url("images/hero_1.jpg")'}}>
     <div className="container">
       <div className="row">

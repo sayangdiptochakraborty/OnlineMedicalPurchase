@@ -6,6 +6,10 @@ import 'owl.carousel/dist/assets/owl.carousel.css';
 import 'owl.carousel/dist/assets/owl.theme.default.css';
 import Header from './header';
 import Footer from './footer';
+import * as firebase from 'firebase';
+import firebaseConfig from './firebaseConfig';
+import 'firebase/auth';
+import 'firebase/database';
 const { Meta } = Card;
 
 export default class Home extends Component
@@ -13,13 +17,33 @@ export default class Home extends Component
     constructor(props)
     {
         super(props);
+        this.state={
+          activeItem: {
+            homeActive: true,
+            storeActive:false,
+            contactActive: false,
+            aboutActive: false,
+          },
+        }
+        if(!firebase.apps.length)
+        {
+          firebase.initializeApp(firebaseConfig);
+        }
         
+    }
+    async componentDidMount()
+    {
+      var dbRef = firebase.database().ref().child('Medicine');
+      dbRef.once('value').then(function(snapshot){
+        sessionStorage.setItem('meds',JSON.stringify(snapshot.val()));
+        
+      })
     }
     render()
     {
         return(
             <div>
-              <Header/>
+              <Header activeItem={this.state.activeItem}/>
                 <div className="site-blocks-cover" style={{backgroundImage: 'url("images/hero_1.jpg")'}}>
                     <div className="container">
                         <div className="row">

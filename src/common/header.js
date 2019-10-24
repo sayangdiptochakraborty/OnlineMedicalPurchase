@@ -130,38 +130,81 @@ export default class Header extends Component{
     doSignInWithEmailAndPassword = (e) =>
     {
       firebase.auth().signInWithEmailAndPassword(this.state.email,this.state.password).then(()=>{
-        sessionStorage.setItem('uid',firebase.auth().currentUser.uid);
-        var dbRef = firebase.database().ref().child('Buyer');
-        dbRef.once('value').then(function(snapshot){
-          if(snapshot.child(firebase.auth().currentUser.uid).val()===null)
-          {
-            var ref = firebase.database().ref().child('Seller')
-            ref.once('value').then(function(snap){ 
-              if(snap.child(firebase.auth().currentUser.uid).val()===null)
-              {
-                var refE = firebase.database().ref().child('Employee')
-                refE.once('value').then(function(snapp){
-                  sessionStorage.setItem('userDetails',JSON.stringify(snapp.child(firebase.auth().currentUser.uid).val()));
-                  sessionStorage.setItem('type','employee')
-                }) 
-              }
-              else
-              {
-                sessionStorage.setItem('userDetails',JSON.stringify(snap.child(firebase.auth().currentUser.uid).val()));
-                sessionStorage.setItem('type','vendor')
-              }
-            })
-          }
-          else
-          {
+        if(this.state.type==='customer')
+        {
+          var dbRef = firebase.database().ref().child('Buyer');
+          dbRef.once('value').then(function(snapshot){
+            if(snapshot.child(firebase.auth().currentUser.uid).val()===null)
+            {
+              throw new Error;
+            }
+            sessionStorage.setItem('uid',firebase.auth().currentUser.uid);
             sessionStorage.setItem('userDetails',JSON.stringify(snapshot.child(firebase.auth().currentUser.uid).val()));
             sessionStorage.setItem('type','customer');
+            document.location.reload();
+          }).catch(function(error){
+            sessionStorage.removeItem('uid');
+            sessionStorage.removeItem('userDetails')
+            sessionStorage.removeItem('type');
+            message.warning('NOT CUSTOMER ACCOUNT')
+            return;
+          })
+
+        }
+        else if(this.state.type==='vendor')
+        {
+          var ref = firebase.database().ref().child('Seller')
+          ref.once('value').then(function(snap){
+            if(snap.child(firebase.auth().currentUser.uid).val()===null)
+            {
+              throw new Error;
+            }
+            sessionStorage.setItem('uid',firebase.auth().currentUser.uid);
+            sessionStorage.setItem('userDetails',JSON.stringify(snap.child(firebase.auth().currentUser.uid).val()));
+            sessionStorage.setItem('type','vendor');
+            document.location.reload();
           }
-          document.location.reload();
-        })
+          ).catch(function(error){
+            {
+              sessionStorage.removeItem('uid');
+              sessionStorage.removeItem('userDetails')
+              sessionStorage.removeItem('type');
+              message.warning('NOT VENDOR ACCOUNT')
+              return;
+            }
+          })
+        }
+        else
+        {
+          var refE = firebase.database().ref().child('Employee')
+          refE.once('value').then(function(snapp){
+            if(snapp.child(firebase.auth().currentUser.uid).val()===null)
+            {
+              throw new Error;
+            }
+            sessionStorage.setItem('uid',firebase.auth().currentUser.uid);
+            sessionStorage.setItem('userDetails',JSON.stringify(snapp.child(firebase.auth().currentUser.uid).val()));
+            sessionStorage.setItem('type','employee')
+            document.location.reload();
+          }).catch(function(error){
+            {
+              sessionStorage.removeItem('uid');
+              sessionStorage.removeItem('userDetails')
+              sessionStorage.removeItem('type');
+              message.warning('NOT EMPLOYEE ACCOUNT')
+              return;
+            }
+          })
+        }
       }).catch(function(error){
-          message.error('Failed to Login');
-        })
+        {
+          sessionStorage.removeItem('uid');
+          sessionStorage.removeItem('userDetails')
+          sessionStorage.removeItem('type');
+          message.error('INCORRECT CREDENTIALS')
+          return;
+        }
+      })
       
     }
 
@@ -171,7 +214,7 @@ export default class Header extends Component{
       sessionStorage.removeItem('uid');
       sessionStorage.removeItem('userDetails');
       sessionStorage.removeItem('type');
-      document.location.reload();
+      window.location.href = 'http://localhost:3000/';
     }
     keyPress = (e) => {
       if(e.keyCode===13)
@@ -189,6 +232,12 @@ export default class Header extends Component{
       {
         this.setState({loggedIn:true,visible:false})
       }
+      else
+      {
+        sessionStorage.removeItem('userDetails')
+        sessionStorage.removeItem('type');
+      }
+
     }
     render()
     {
@@ -224,10 +273,11 @@ export default class Header extends Component{
           <div className="main-nav d-none d-lg-block">
             <nav className="site-navigation text-right text-md-center" role="navigation">
               <ul className="site-menu js-clone-nav d-none d-lg-block">
-                <li className="active"><a href="/">Home</a></li>
-                <li><a href="/shop">Store</a></li>
-                <li><a href="/about">About</a></li>
-                <li><a href="/contact">Contact</a></li>
+                
+                <li className={this.props!=undefined?this.props.activeItem!=undefined?this.props.activeItem.homeActive?"active":"":"":""}><a href="/">Home</a></li>
+                <li className={this.props!=undefined?this.props.activeItem!=undefined?this.props.activeItem.storeActive?"active":"":"":""}><a href="/shop">Store</a></li>
+                <li className={this.props!=undefined?this.props.activeItem!=undefined?this.props.activeItem.aboutActive?"active":"":"":""}><a href="/about">About</a></li>
+                <li className={this.props!=undefined?this.props.activeItem!=undefined?this.props.activeItem.contactActive?"active":"":"":""}><a href="/contact">Contact</a></li>
               </ul>
             </nav>
           </div>
@@ -237,7 +287,7 @@ export default class Header extends Component{
             &nbsp;
             {type==='vendor'||type=='employee'?null:<a href="/cart" className="icons-btn d-inline-block bag">
               <Icon type="shopping-cart" style={{fontSize: '30px'}}/>
-              <span class="number"style={{marginTop: '-12px'}}>2</span>
+              <span class="number"style={{marginTop: '-12px'}}>0</span>
             </a>}
             <a href="javascript:void(0)" className="site-menu-toggle js-menu-toggle ml-3 d-inline-block d-lg-none"><span className="icon-menu" /></a>
           </div>
@@ -290,9 +340,9 @@ export default class Header extends Component{
                         <br/>
                         <div className="row" style={{marginLeft:'110px'}}>
                           <Radio.Group defaultValue="customer" buttonStyle="solid" style={{width:'100%'}} value={this.state.type} onChange={(e)=>{this.setState({type:e.target.value})}}>
-                          <Radio.Button value="customer">Customer</Radio.Button>
-                          <Radio.Button value="vendor">Vendor</Radio.Button>
-                        </Radio.Group>
+                            <Radio.Button value="customer">Customer</Radio.Button>
+                            <Radio.Button value="vendor">Vendor</Radio.Button>
+                          </Radio.Group>
                         </div>
                         <br/>
                         <br/>
@@ -319,6 +369,15 @@ export default class Header extends Component{
                           <br/>
                           <br/>
                           <Input.Password addonBefore={<Icon type="lock" />} placeholder="password" value={this.state.password} onChange={(e)=>{this.setState({password:e.target.value})}}/>
+                          <br/>
+                          <br/>
+                          <div className="row" style={{marginLeft:'30px'}}>
+                            <Radio.Group defaultValue="customer" buttonStyle="solid" style={{width:'100%'}} value={this.state.type} onChange={(e)=>{this.setState({type:e.target.value})}}>
+                              <Radio.Button value="customer">Customer</Radio.Button>
+                              <Radio.Button value="vendor">Vendor</Radio.Button>
+                              <Radio.Button value="employee">Employee</Radio.Button>
+                          </Radio.Group>
+                          </div>
                           <br/>
                           <br/>
                           <Button type="primary" block onClick={this.doSignInWithEmailAndPassword}>

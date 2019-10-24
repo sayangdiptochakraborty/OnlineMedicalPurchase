@@ -10,16 +10,24 @@ export default class Shop extends React.Component{
     constructor(props)
     {
         super(props)
+        this.state={
+          activeItem: {
+            homeActive: false,
+            storeActive:true,
+            contactActive: false,
+            aboutActive: false,
+          },
+        }
         if(!firebase.apps.length)
         {
           firebase.initializeApp(firebaseConfig);
         }
     }
-    async componentDidMount()
+    async componentWillMount()
     {
       var dbRef = firebase.database().ref().child('Medicine');
       dbRef.once('value').then(function(snapshot){
-        sessionStorage.setItem('meds',JSON.stringify(snapshot.val()))
+        sessionStorage.setItem('meds',JSON.stringify(snapshot.val()));
         
       })
     }
@@ -32,7 +40,7 @@ export default class Shop extends React.Component{
       });
         return(
             <div>
-              <Header/>
+              <Header activeItem={this.state.activeItem}/>
                 <div className="bg-light py-3">
                   <div className="container">
                     <div className="row">
