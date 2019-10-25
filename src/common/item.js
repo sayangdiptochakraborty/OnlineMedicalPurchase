@@ -45,7 +45,7 @@ export default class Item extends React.Component
       }
     }
 
-    async componentDidMount()
+    async componentWillMount()
     {
       var dbRef = firebase.database().ref().child('Medicine');
       dbRef.once('value',snapshot=>{
