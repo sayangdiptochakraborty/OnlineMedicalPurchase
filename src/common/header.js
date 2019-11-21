@@ -231,11 +231,16 @@ export default class Header extends Component{
       if(uid!=undefined)
       {
         this.setState({loggedIn:true,visible:false})
+        var dbRef = firebase.database().ref().child('Cart');
+          dbRef.once('value').then(function(snapshot){
+            sessionStorage.setItem('cart',JSON.stringify(snapshot.child(uid).val()));
+          });
       }
       else
       {
         sessionStorage.removeItem('userDetails')
         sessionStorage.removeItem('type');
+        
       }
 
     }
@@ -287,7 +292,6 @@ export default class Header extends Component{
             &nbsp;
             {type==='vendor'||type=='employee'?null:<a href="/cart" className="icons-btn d-inline-block bag">
               <Icon type="shopping-cart" style={{fontSize: '30px'}}/>
-              <span class="number"style={{marginTop: '-12px'}}>0</span>
             </a>}
             <a href="javascript:void(0)" className="site-menu-toggle js-menu-toggle ml-3 d-inline-block d-lg-none"><span className="icon-menu" /></a>
           </div>

@@ -2,7 +2,7 @@ import React from 'react';
 import Header from './header';
 import Footer from './footer';
 import 'antd/dist/antd.css';
-import { Empty } from 'antd';
+import { Empty, message } from 'antd';
 import * as firebase from 'firebase';
 import firebaseConfig from './firebaseConfig';
 import 'firebase/auth';
@@ -35,14 +35,35 @@ export default class Item extends React.Component
     }
 
     addToCart = (e) =>{
+      if(this.state.selectedShop==='')
+      {
+        message.warning('Please Select Shop.')
+        return;
+      }
       if(this.state.loggedIn)
       {
-        console.log(e)
+        var uid = sessionStorage.getItem('uid');
+        firebase.database().ref().child(`Cart/${uid}/${this.state.item.Info.Name}`).set({
+          Med_Name: this.state.item.Info.Name,
+          Quantity: `${this.state.count}`,
+          Shop_Name: this.state.selectedShop,
+          Total_Price: `${parseInt(this.state.item.Info.Price)*this.state.count}`,
+        }).then(()=>{
+          message.success('Item Added.')
+          sessionStorage.removeItem('cart');
+          var dbRef = firebase.database().ref().child('Cart');
+          dbRef.once('value').then(function(snapshot){
+            sessionStorage.setItem('cart',JSON.stringify(snapshot.child(uid).val()));
+          });
+        }).catch(function(error){
+          message.log(error.message);
+        });
       }
       else
       {
-        console.log(e)
+        message.warning('Pease Login');
       }
+      
     }
 
     async componentWillMount()
