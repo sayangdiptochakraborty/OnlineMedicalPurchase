@@ -93,6 +93,7 @@ export default class Header extends Component{
             email: this.state.email,
             username: this.state.name,
             image: "default",
+            thumb_image: "default",
           }).then(()=>{
             var dbRef = firebase.database().ref().child('Buyer').child(firebase.auth().currentUser.uid);
             dbRef.on('value',snap=>sessionStorage.setItem('userDetails',JSON.stringify(snap.val())));

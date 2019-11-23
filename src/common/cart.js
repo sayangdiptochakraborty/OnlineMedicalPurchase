@@ -54,7 +54,9 @@ export default class Cart extends React.Component
     }
     render()
     {
-      var keys = Object.keys(this.state.items);
+      if(this.state.items!=null)
+      {
+        var keys = Object.keys(this.state.items);
       var tableRows = keys.map((key)=>{
         return(
           <tr>
@@ -71,6 +73,8 @@ export default class Cart extends React.Component
           </td>
         </tr>)
       });
+      }
+      
         return(
             <div>
               <Header/>
@@ -110,13 +114,13 @@ export default class Cart extends React.Component
         </div>
       </form>:<form className="col-md-12" method="post"><Empty description={<span>Cart is Empty</span>}/></form>}
     </div>
+    {this.state.items?
     <div className="row">
       <div className="col-md-6">
         <div className="row mb-5">
             <button className="btn btn-outline-primary btn-md btn-block"><a href="/shop" style={{color:'#000000'}}>Continue Shopping</a></button>
         </div>
       </div>
-      {this.state.items?
       <div className="col-md-6 pl-5">
         <div className="row justify-content-end">
           <div className="col-md-7">
@@ -140,8 +144,14 @@ export default class Cart extends React.Component
             </div>
           </div>
         </div>
-      </div>:null} 
-    </div>
+      </div>
+    </div>:<div className="row">
+      <div className="col-md-12">
+      <div className="row mb-5">
+            <button className="btn btn-outline-primary btn-md btn-block"><a href="/shop" style={{color:'#000000'}}>Continue Shopping</a></button>
+        </div>
+      </div>
+      </div>} 
   </div>
 </div>:<div><br/><Empty description={<span>Please Login</span>}/><br/><br/></div>}
 <Footer/>

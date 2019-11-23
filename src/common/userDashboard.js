@@ -4,6 +4,12 @@ import {Row,Col} from 'antd';
 import { Card, Icon, Button, Input, Upload, Divider } from 'antd';
 import Header from './header';
 import Footer from './footer';
+import * as firebase from 'firebase';
+import firebaseConfig from './firebaseConfig';
+import 'firebase/auth';
+import 'firebase/database';
+import 'antd/dist/antd.css';
+import { Empty,message } from 'antd';
 import { List, Avatar} from 'antd';
 const { Meta } = Card;
 
@@ -33,16 +39,57 @@ export default class UserDashboard extends React.Component
             settings: false,
             orderHistory: false,
             monthlySubscription: false,
+            address : '',
+            phone: '',
+            name: '',
+            email: '',
+            image: '',
+            thumb_image: ''
         }
+        if(!firebase.apps.length)
+        {
+          firebase.initializeApp(firebaseConfig);
+        }
+        this.update =  this.update.bind(this)
+    }
+    update = (e) => {
+      var uid = sessionStorage.getItem('uid');
+      firebase.database().ref().child('Buyer').child(sessionStorage.getItem('uid')).remove().then(()=>{
+        firebase.database().ref().child(`Buyer/${uid}`).set({
+          Address: this.state.address,
+          Phone: this.state.phone,
+          email: this.state.email,
+          username: this.state.name,
+          image: this.state.image,
+          thumb_image: this.state.thumb_image,
+        }).then(()=>{
+          message.success('Details Updated')
+          sessionStorage.removeItem('userDetails');
+          var dbRef = firebase.database().ref().child('Buyer').child(uid);
+          dbRef.on('value',snap=>sessionStorage.setItem('userDetails',JSON.stringify(snap.val())));
+          document.location.reload();
+        }).catch(function(error){
+          message.log(error.message);
+        })
+      }).catch(()=>{
+        message.error('Failed to Update.')
+      })
+    }
+    async componentWillMount()
+    {
+      var uid =  sessionStorage.getItem('uid');
+      if(uid!=undefined)
+      {
+        var userDetails = JSON.parse(sessionStorage.getItem('userDetails'));
+        this.setState({name:userDetails['username'],address:userDetails['Address'],phone:userDetails['Phone'],email:userDetails['email'],image:userDetails['image'],thumb_image:userDetails['thumb_image']})
+      }
+      else
+      {
+        window.location.href="/"
+      }
     }
     render()
     {
-        const uploadButton = (
-            <div>
-              <Icon type={this.state.loading ? 'loading' : 'plus'} />
-              <div className="ant-upload-text">Upload</div>
-            </div>
-          );
         return(
             <div>
               <Header/>
@@ -67,35 +114,19 @@ export default class UserDashboard extends React.Component
                     <Divider/>{
                         this.state.settings?
                         <div>
-                        <Row type="flex" justify="space-around">
-                        <Col span={7}></Col>
-                        <Col span={6}>
-                            <Upload className="avatar-uploader" listType="picture-card" showUploadList={false}>{uploadButton}</Upload>
-                        </Col>
-                        <Col span={3}></Col>
+                    <br/>
+                    <Row type="flex" justify="space-around">
+                        <Col span={8}><Input addonBefore={<Icon type="user" />}  defaultValue={this.state.name} size="large"/></Col>
+                        <Col span={8}><Input disabled="true" addonBefore={<Icon type="mail" />}  defaultValue={this.state.email} size="large"/></Col>
                     </Row>
                     <br/>
                     <Row type="flex" justify="space-around">
-                        <Col span={8}><Input addonBefore={<Icon type="user" />} size="large"/></Col>
-                        <Col span={8}><Input disabled="true" addonBefore={<Icon type="mail" />} size="large"/></Col>
+                        <Col span={8}><Input addonBefore={<Icon type="phone" />}  defaultValue={this.state.phone} size="large"/></Col>
+                        <Col span={8}><Input addonBefore={<Icon type="environment" />}  defaultValue={this.state.address} size="large"/></Col>
                     </Row>
                     <br/>
                     <Row type="flex" justify="space-around">
-                        <Col span={8}><Input addonBefore={<Icon type="phone" />} size="large"/></Col>
-                        <Col span={8}><Input addonBefore={<Icon type="environment" />} size="large"/></Col>
-                    </Row>
-                    <br/>
-                    <Row type="flex" justify="space-around">
-                        <Col span={8}><Input.Password addonBefore={<Icon type="lock" />} size="large"/></Col>
-                        <Col span={8}><Input.Password addonBefore={<Icon type="lock" />} size="large"/></Col>
-                    </Row>
-                    <br/>
-                    <Row type="flex" justify="space-around">
-                        <Col span={12}><Input.Password addonBefore={<Icon type="lock" />} size="large"/></Col>
-                    </Row>
-                    <br/>
-                    <Row type="flex" justify="space-around">
-                        <Col span={12}><Button type="primary" block>Update</Button></Col>
+                        <Col span={12}><Button type="primary" block onClick={this.update}>Update</Button></Col>
                     </Row>
                     </div>:null
                     }
