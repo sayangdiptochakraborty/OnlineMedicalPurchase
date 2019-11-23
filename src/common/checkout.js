@@ -25,7 +25,8 @@ export default class Checkout extends React.Component
             name: '',
             email: '',
             items: [],
-            total: 0
+            total: 0,
+            subscription: "1",
         }
         if(!firebase.apps.length)
         {
@@ -49,6 +50,24 @@ export default class Checkout extends React.Component
         TimeStamp: date_format_str
       }
       var uid = sessionStorage.getItem('uid');
+      if(this.state.subscription!='1')
+      {
+        var discount = this.state.subscription === '2'?'10%':this.state.subscription === '3'?'20%':'30%';
+        var duration = this.state.subscription === '2'?'3 months':this.state.subscription === '3'?'6 months':'12 months';
+        var info2 = {
+          discount: discount,
+          duration: duration,
+          start_date: date
+        }
+        firebase.database().ref().child(`Subscription/${uid}`).set({
+          Info : info2,
+          Medicines: medicine
+        }).then(()=>{
+          message.success('Subscription Added')
+        }).catch(()=>{
+          message.error('Failed.')
+        });
+      }
       firebase.database().ref().child(`Order History/${uid}/${uuid}`).set({
         Info : info,
         Medicines: medicine
@@ -65,6 +84,9 @@ export default class Checkout extends React.Component
       });
 
       
+    }
+    handleChange = (e) =>{
+      this.setState({subscription:e.target.value})
     }
     async componentWillMount()
     {
@@ -120,6 +142,15 @@ export default class Checkout extends React.Component
       <div className="col-md-6 mb-5 mb-md-0">
         <h2 className="h3 mb-3 text-black">Billing Details</h2>
         <div className="p-3 p-lg-5 border">
+          <div className="form-group">
+            <label htmlFor="c_country" className="text-black">Subscription Plan<span className="text-danger">*</span></label>
+              <select id="c_country" className="form-control" value={this.state.subscription} onChange={this.handleChange}>
+                <option value="1">NO</option>
+                <option value="2">YES - 3 MONTHS</option>
+                <option value="3">YES - 6 MONTHS</option>
+                <option value="4">YES - 12 MONTHS</option>
+              </select>
+          </div>
           <div className="form-group row">
             <div className="col-md-12">
               <label htmlFor="name" className="text-black">Name <span className="text-danger">*</span></label>

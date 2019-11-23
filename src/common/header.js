@@ -232,15 +232,29 @@ export default class Header extends Component{
       if(uid!=undefined)
       {
         this.setState({loggedIn:true,visible:false})
-        var dbRef = firebase.database().ref().child('Cart');
+        if(sessionStorage.getItem('type')==='customer')
+        {
+          var dbRef = firebase.database().ref().child('Cart');
           dbRef.once('value').then(function(snapshot){
             sessionStorage.setItem('cart',JSON.stringify(snapshot.child(uid).val()));
           });
+          var dbRef2 = firebase.database().ref().child('Order History');
+          dbRef2.once('value').then(function(snapshot){
+            sessionStorage.setItem('orders',JSON.stringify(snapshot.child(uid).val()));
+          });
+          var dbRef3 = firebase.database().ref().child('Subscription');
+          dbRef3.once('value').then(function(snapshot){
+            sessionStorage.setItem('subscription',JSON.stringify(snapshot.child(uid).val()));
+          });
+        }
       }
       else
       {
         sessionStorage.removeItem('userDetails')
         sessionStorage.removeItem('type');
+        sessionStorage.removeItem('cart');
+        sessionStorage.removeItem('orders');
+        sessionStorage.removeItem('subscription');
         
       }
 

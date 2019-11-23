@@ -44,7 +44,9 @@ export default class UserDashboard extends React.Component
             name: '',
             email: '',
             image: '',
-            thumb_image: ''
+            thumb_image: '',
+            orders: [],
+            subscriptions: []
         }
         if(!firebase.apps.length)
         {
@@ -81,7 +83,9 @@ export default class UserDashboard extends React.Component
       if(uid!=undefined)
       {
         var userDetails = JSON.parse(sessionStorage.getItem('userDetails'));
-        this.setState({name:userDetails['username'],address:userDetails['Address'],phone:userDetails['Phone'],email:userDetails['email'],image:userDetails['image'],thumb_image:userDetails['thumb_image']})
+        var orders = JSON.parse(sessionStorage.getItem('orders'));
+        var subscription = JSON.parse(sessionStorage.getItem('subscription'));
+        this.setState({name:userDetails['username'],address:userDetails['Address'],phone:userDetails['Phone'],email:userDetails['email'],image:userDetails['image'],thumb_image:userDetails['thumb_image'],orders:orders,subscriptions:subscription})
       }
       else
       {
@@ -90,6 +94,41 @@ export default class UserDashboard extends React.Component
     }
     render()
     {
+      if(this.state.subscriptions!=null)
+      {
+        var keys = Object.keys(this.state.subscriptions['Medicines']);
+        var tableRows = keys.map((key)=>{
+        return(
+          <tr>
+            <td>{this.state.subscriptions['Medicines'][key].Med_Name} <strong className="mx-2">x</strong> {this.state.subscriptions['Medicines'][key].Quantity}</td>
+            <td>₹{this.state.subscriptions['Medicines'][key].Total_Price}</td>
+          </tr>)
+      });
+      }
+      if(this.state.orders!=null)
+      {
+        var orderKeys = Object.keys(this.state.orders);
+        var orderTableRows = orderKeys.map((key)=>{
+        var medicine = Object.keys(this.state.orders[key]['Medicines']);
+        var t = medicine.map((med)=>{
+          return(
+            <tr> 
+              <td style={{width:'100%'}}>{this.state.orders[key]['Medicines'][med].Med_Name}<strong className="mx-2">x</strong> {this.state.orders[key]['Medicines'][med].Quantity}</td>
+            <td style={{width:'100%'}}>₹{this.state.orders[key]['Medicines'][med].Total_Price}</td>
+            </tr>
+          )
+        });
+        return(
+          <tr>
+            <td><strong className="mx-2">#{key}</strong></td>
+            <td>{this.state.orders[key]['Info']['Date']}</td>
+            <td><strong className="mx-2">{this.state.orders[key]['Info']['Status']}</strong></td>
+            <td>
+              {t}
+            </td>
+          </tr>)
+      });
+      }
         return(
             <div>
               <Header/>
@@ -116,13 +155,13 @@ export default class UserDashboard extends React.Component
                         <div>
                     <br/>
                     <Row type="flex" justify="space-around">
-                        <Col span={8}><Input addonBefore={<Icon type="user" />}  defaultValue={this.state.name} size="large"/></Col>
-                        <Col span={8}><Input disabled="true" addonBefore={<Icon type="mail" />}  defaultValue={this.state.email} size="large"/></Col>
+                        <Col span={8}><Input addonBefore={<Icon type="user" />}  defaultValue={this.state.name} onChange={(e)=>{this.setState({name:e.target.value})}} size="large"/></Col>
+                        <Col span={8}><Input disabled="true" addonBefore={<Icon type="mail" />}  defaultValue={this.state.email} onChange={(e)=>{this.setState({email:e.target.value})}} size="large"/></Col>
                     </Row>
                     <br/>
                     <Row type="flex" justify="space-around">
-                        <Col span={8}><Input addonBefore={<Icon type="phone" />}  defaultValue={this.state.phone} size="large"/></Col>
-                        <Col span={8}><Input addonBefore={<Icon type="environment" />}  defaultValue={this.state.address} size="large"/></Col>
+                        <Col span={8}><Input addonBefore={<Icon type="phone" />}  defaultValue={this.state.phone} onChange={(e)=>{this.setState({phone:e.target.value})}} size="large"/></Col>
+                        <Col span={8}><Input addonBefore={<Icon type="environment" />}  defaultValue={this.state.address} onChange={(e)=>{this.setState({address:e.target.value})}} size="large"/></Col>
                     </Row>
                     <br/>
                     <Row type="flex" justify="space-around">
@@ -133,36 +172,28 @@ export default class UserDashboard extends React.Component
                     {
                         this.state.orderHistory?
                         <Row type="flex" justify="space-around">
-                            <Col span={2}></Col>
-                            <Col span={12}>
-                            <List
-                        itemLayout="vertical"
-                        size="small"
-                        pagination={{pageSize: 3,
-                        }}
-                        dataSource={listData}
-                        renderItem={item => (
-                          <List.Item
-                            key={item.title}
-                            actions={[
-                              <IconText type="edit"/>,
-                              <IconText type="delete"/>
-                            ]}
-                            extra={
-                              <img
-                                width={100}
-                                alt="logo"
-                                src={item.img}
-                              />
-                            }
-                          >
-                            <List.Item.Meta
-                              title={<a href={item.href}>{item.title}</a>}
-                              description={item.description}
-                            />
-                          </List.Item>)}/>
+                            <Col span={3}></Col>
+                            <Col span={10}>
+                              {this.state.orders!=null?
+                              <div>
+                              <table className="table table-bordered">
+                                <thead>
+                                  <tr>
+                                    <th className="product-name">Order ID</th>
+                                    <th className="product-price">Date</th>
+                                    <th className="product-quantity">Status</th>
+                                    <th className="product-total">Items</th>
+                                  </tr>
+                                </thead>
+                                <tbody>
+                                  {orderTableRows}
+                                </tbody>
+                              </table>
+                            </div>
+                            :<Empty description={<span>No subscriptions</span>}/>
+                              }
                             </Col>
-                            <Col span={2}></Col>
+                            <Col span={3}></Col>
                         </Row>
                         :null
                     }
@@ -170,33 +201,23 @@ export default class UserDashboard extends React.Component
                         this.state.monthlySubscription?
                         <Row type="flex" justify="space-around">
                             <Col span={2}></Col>
-                            <Col span={12}>
-                            <List
-                        itemLayout="vertical"
-                        size="small"
-                        pagination={{pageSize: 3,
-                        }}
-                        dataSource={listData}
-                        renderItem={item => (
-                          <List.Item
-                            key={item.title}
-                            actions={[
-                              <IconText type="edit"/>,
-                              <IconText type="delete"/>
-                            ]}
-                            extra={
-                              <img
-                                width={100}
-                                alt="logo"
-                                src={item.img}
-                              />
-                            }
-                          >
-                            <List.Item.Meta
-                              title={<a href={item.href}>{item.title}</a>}
-                              description={item.description}
-                            />
-                          </List.Item>)}/>
+                            <Col span={12} style={{textAlign: 'center',alignContent: 'center'}}>
+                              {this.state.subscriptions!=undefined ||this.state.subscriptions!=null?
+                              <div>
+                                <Card style={{height: 220}} hoverable><Meta title="Subscription" description={<div ><h2>{this.state.subscriptions['Info']['duration']} - {this.state.subscriptions['Info']['start_date']} - {this.state.subscriptions['Info']['discount']} OFF</h2>
+                                <table className="table site-block-order-table mb-5">
+                                  <thead>
+                                    <tr><th>Product</th>
+                                        <th>Total</th>
+                                    </tr></thead>
+                                  <tbody>
+                                    {tableRows}
+                                  </tbody>
+                                </table>
+                                </div>} /></Card>
+                              </div>
+                              :<Empty description={<span>No subscriptions</span>}/>
+                              }
                             </Col>
                             <Col span={2}></Col>
                         </Row>
