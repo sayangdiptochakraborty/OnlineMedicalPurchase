@@ -70,7 +70,7 @@ export default class VendorDashboard extends React.Component
       if(meds[this.state.name]!=null)
       {
         message.loading('Adding Item')
-        firebase.database().ref().child(`Medicine/${this.state.itemName}/Shop`).child(this.state.name).set({
+        firebase.database().ref().child(`Medicine/${this.state.itemName}/Shop`).child(this.state.name).update({
           Expiry: this.state.itemExpiry,
           Name: this.state.name,
           image: this.state.image
