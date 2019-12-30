@@ -67,14 +67,21 @@ export default class VendorDashboard extends React.Component
     }
     addItem = (e) => {
       var meds = JSON.parse(sessionStorage.getItem('meds'))
-      if(meds[this.state.name]!=null)
+      if(meds[this.state.itemName]!=undefined)
       {
         message.loading('Adding Item')
         firebase.database().ref().child(`Medicine/${this.state.itemName}/Shop`).child(this.state.name).update({
           Expiry: this.state.itemExpiry,
           Name: this.state.name,
           image: this.state.image
-        }).then(()=>{message.success('Item Added');setTimeout(()=>{document.location.reload();},1500)}).catch(()=>{
+        }).then(()=>{
+          sessionStorage.removeItem('meds');
+          message.success('Item Added');
+          firebase.database().ref().child('Medicine').once('value').then(function(snapshot){
+            sessionStorage.setItem('meds',JSON.stringify(snapshot.val()));
+            setTimeout(()=>{document.location.reload();},1500)
+          })
+          }).catch(()=>{
           message.error('Failed')
         });
       }
@@ -97,11 +104,18 @@ export default class VendorDashboard extends React.Component
           Expiry: this.state.itemExpiry,
           Name: this.state.name,
           image: this.state.image
-        }).then(()=>{message.success('Item Added');setTimeout(()=>{document.location.reload();},800)}).catch(()=>{
+        }).then(()=>{
+          sessionStorage.removeItem('meds');
+          message.success('Item Added');
+          firebase.database().ref().child('Medicine').once('value').then(function(snapshot){
+            sessionStorage.setItem('meds',JSON.stringify(snapshot.val()));
+            setTimeout(()=>{document.location.reload();},1500)
+          })
+        }).catch(()=>{
           message.error('Failed')
         })},2000)
-      }
     }
+  }
     update = (e) => {
       var uid = sessionStorage.getItem('uid');
         firebase.database().ref().child(`Seller/${uid}`).set({
@@ -134,6 +148,24 @@ export default class VendorDashboard extends React.Component
     }
     render()
     {
+        var meds= JSON.parse(sessionStorage.getItem('meds'));
+        var keys= Object.keys(meds)
+        var shop = JSON.parse(sessionStorage.getItem('userDetails')).Shop_Name
+        var data = keys.map((key)=>{
+          
+          if(meds[key].Shop[shop]!=undefined)
+          {
+            return(
+              <tr> 
+                <td style={{width:'100%'}}><strong className="mx-2">{key}</strong></td>
+                <td style={{width:'100%'}}>₹{meds[key].Info.Price}</td>
+                <td style={{width:'100%'}}>{meds[key].Info.Type}</td>
+                <td style={{width:'100%'}}>{meds[key].Info.usage}</td>
+                <td style={{width:'100%'}}>{meds[key].Shop[shop].Expiry}</td>
+              </tr>
+            )
+          }
+        })
         return(
             <div>
               <Header/>
@@ -211,74 +243,31 @@ export default class VendorDashboard extends React.Component
                         </div>:null
                     }
                     {
-                        this.state.orderList?
-                        <Row type="flex" justify="space-around">
-                            <Col span={2}></Col>
-                            <Col span={12}>
-                            <List
-                        itemLayout="vertical"
-                        size="small"
-                        pagination={{pageSize: 3,
-                        }}
-                        dataSource={listData}
-                        renderItem={item => (
-                          <List.Item
-                            key={item.title}
-                            actions={[
-                              <IconText type="edit"/>,
-                              <IconText type="delete"/>
-                            ]}
-                            extra={
-                              <img
-                                width={100}
-                                alt="logo"
-                                src={item.img}
-                              />
-                            }
-                          >
-                            <List.Item.Meta
-                              title={<a href={item.href}>{item.title}</a>}
-                              description={item.description}
-                            />
-                          </List.Item>)}/>
-                            </Col>
-                            <Col span={2}></Col>
-                        </Row>
-                        :null
-                    }
-                    {
                         this.state.itemList?
                         <Row type="flex" justify="space-around">
-                            <Col span={2}></Col>
-                            <Col span={12}>
-                            <List
-                        itemLayout="vertical"
-                        size="small"
-                        pagination={{pageSize: 3,
-                        }}
-                        dataSource={listData}
-                        renderItem={item => (
-                          <List.Item
-                            key={item.title}
-                            actions={[
-                                <IconText type="edit"/>,
-                                <IconText type="delete"/>
-                            ]}
-                            extra={
-                              <img
-                                width={100}
-                                alt="logo"
-                                src={item.img}
-                              />
-                            }
-                          >
-                            <List.Item.Meta
-                              title={<a href={item.href}>{item.title}</a>}
-                              description={item.description}
-                            />
-                          </List.Item>)}/>
+                            <Col span={3}></Col>
+                            <Col span={10}>
+                              {data!=null?
+                              <div>
+                              <table className="table table-bordered">
+                                <thead>
+                                  <tr>
+                                    <th className="product-name">Name</th>
+                                    <th className="product-price">Price</th>
+                                    <th className="product-quantity">Type</th>
+                                    <th className="product-total">Usage</th>
+                                    <th className="product-total">Expiry</th>
+                                  </tr>
+                                </thead>
+                                <tbody>
+                                  {data}
+                                </tbody>
+                              </table>
+                            </div>
+                            :<Empty description={<span>No Medicines</span>}/>
+                              }
                             </Col>
-                            <Col span={2}></Col>
+                            <Col span={3}></Col>
                         </Row>
                         :null
                     }
@@ -294,10 +283,7 @@ export default class VendorDashboard extends React.Component
                 <br/>
                 <br/>
                 <Row type="flex" justify="space-around">
-                    <Col span={2}></Col>
-                    <Col span={6}><Card style={{height: 250}} hoverable cover={<Icon type="file-done" style={{fontSize: '100px',paddingTop: '20px'}}/>} onClick={(e)=>{this.setState({detailsVisible:true,orderList:true})}}><Meta title="Orders and Report" description="Get a list of all your orders, download the report and revenue generated." /></Card></Col>
                     <Col span={6}><Card style={{height: 250}} hoverable cover={<Icon type="setting" style={{fontSize: '100px',paddingTop: '20px'}}/>} onClick={(e)=>{this.setState({detailsVisible:true,settings:true})}}><Meta title="Settings" description="Change and update your profile settings." /></Card></Col>
-                    <Col span={2}></Col>
                 </Row>
                 
                 </div>}
