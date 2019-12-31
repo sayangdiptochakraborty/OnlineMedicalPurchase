@@ -173,7 +173,7 @@ export default class VendorDashboard extends React.Component
                     <div className="container">
                         <div className="row">
                             <div className="col-md-12 mb-0">
-                                <a href="javascript:void(0);">Home</a> <span className="mx-2 mb-0">/</span>
+                                <a href="/">Home</a> <span className="mx-2 mb-0">/</span>
                                 <strong className="text-black">Dashboard</strong>
                             </div>
                         </div>

@@ -96,11 +96,13 @@ export default class Header extends Component{
             thumb_image: "default",
           }).then(()=>{
             var dbRef = firebase.database().ref().child('Buyer').child(firebase.auth().currentUser.uid);
-            dbRef.on('value',snap=>sessionStorage.setItem('userDetails',JSON.stringify(snap.val())));
-            sessionStorage.setItem('type','customer');
-            document.location.reload();
+            dbRef.once('value').then(function(snap){
+              sessionStorage.setItem('userDetails',JSON.stringify(snap.val()))
+              sessionStorage.setItem('type','customer');
+              document.location.reload();
+            });
           }).catch(function(error){
-            message.log(error.message);
+            message.error(error.message);
           })
           
         }
@@ -115,12 +117,15 @@ export default class Header extends Component{
             image: "default",
           }).then(()=>{
             var dbRef = firebase.database().ref().child('Seller').child(firebase.auth().currentUser.uid);
-            dbRef.on('value',snap=>sessionStorage.setItem('userDetails',JSON.stringify(snap.val())));
-            sessionStorage.setItem('type','vendor');
+            dbRef.once('value').then(function(snap){
+              sessionStorage.setItem('userDetails',JSON.stringify(snap.val()))
+              sessionStorage.setItem('type','vendor');
+              document.location.reload();
+            });
           }).catch(function(error){
-            message.log(error.message);
+            message.error(error.message);
           })
-          document.location.reload();
+          
         }
         }).catch(function(error){
           message.error(error.code+" : "+error.message);
@@ -185,8 +190,14 @@ export default class Header extends Component{
             }
             sessionStorage.setItem('uid',firebase.auth().currentUser.uid);
             sessionStorage.setItem('userDetails',JSON.stringify(snapp.child(firebase.auth().currentUser.uid).val()));
-            sessionStorage.setItem('type','employee')
-            document.location.reload();
+            sessionStorage.setItem('type','employee');
+            firebase.database().ref().child('Transaction').once('value').then(function(sn){
+              sessionStorage.setItem('transactions',JSON.stringify(sn.val()));
+            })
+            firebase.database().ref().child('Seller').once('value').then(function(snp){
+              sessionStorage.setItem('vendors',JSON.stringify(snp.val()));
+              document.location.reload();
+            })
           }).catch(function(error){
             {
               sessionStorage.removeItem('uid');
@@ -202,6 +213,8 @@ export default class Header extends Component{
           sessionStorage.removeItem('uid');
           sessionStorage.removeItem('userDetails')
           sessionStorage.removeItem('type');
+          sessionStorage.removeItem('vendors');
+          sessionStorage.removeItem('transactions');
           message.error('INCORRECT CREDENTIALS')
           return;
         }
@@ -215,13 +228,15 @@ export default class Header extends Component{
       sessionStorage.removeItem('uid');
       sessionStorage.removeItem('userDetails');
       sessionStorage.removeItem('type');
+      sessionStorage.removeItem('vendors');
+      sessionStorage.removeItem('transactions');
       window.location.href = 'http://localhost:3000/';
     }
     keyPress = (e) => {
       if(e.keyCode===13)
       {
         var searchVal=this.state.searchVal;
-        searchVal=searchVal.toUpperCase()[0]+searchVal.toLowerCase().substring(1);
+        searchVal=searchVal.toUpperCase()[0]+searchVal.substring(1);
         window.location.href = 'http://localhost:3000/item/'+searchVal;
       }
     }

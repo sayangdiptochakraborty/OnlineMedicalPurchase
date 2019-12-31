@@ -17,7 +17,7 @@ export default class Footer extends React.Component
   <div className="container">
     <div className="row align-items-stretch">
       <div className="col-lg-6 mb-5 mb-lg-0">
-        <a href="#" className="banner-1 h-100 d-flex" style={{backgroundImage: 'url("http://localhost:3000/images/bg_1.jpg")'}}>
+        <a href="javascript:void(0);" className="banner-1 h-100 d-flex" style={{backgroundImage: 'url("http://localhost:3000/images/bg_1.jpg")'}}>
           <div className="banner-1-inner align-self-center">
             <h2>Pharma Products</h2>
             <p>Get all your pharmacy products right under one roof. All our products are personally verified for quality, validity and health before they are sent to you.
@@ -26,7 +26,7 @@ export default class Footer extends React.Component
         </a>
       </div>
       <div className="col-lg-6 mb-5 mb-lg-0">
-        <a href="#" className="banner-1 h-100 d-flex" style={{backgroundImage: 'url("http://localhost:3000/images/bg_2.jpg")'}}>
+        <a href="javascript:void(0);" className="banner-1 h-100 d-flex" style={{backgroundImage: 'url("http://localhost:3000/images/bg_2.jpg")'}}>
           <div className="banner-1-inner ml-auto  align-self-center">
             <h2>Rated by Experts</h2>
             <p>9/10 Doctors recommend GetMeds. 

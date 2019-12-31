@@ -68,8 +68,10 @@ export default class UserDashboard extends React.Component
           message.success('Details Updated')
           sessionStorage.removeItem('userDetails');
           var dbRef = firebase.database().ref().child('Buyer').child(uid);
-          dbRef.on('value',snap=>sessionStorage.setItem('userDetails',JSON.stringify(snap.val())));
-          document.location.reload();
+          dbRef.once('value').then(function(snap){
+            sessionStorage.setItem('userDetails',JSON.stringify(snap.val()))
+            document.location.reload();
+          });
         }).catch(function(error){
           message.log(error.message);
         })
@@ -94,7 +96,7 @@ export default class UserDashboard extends React.Component
     }
     render()
     {
-      if(this.state.subscriptions!=null)
+      if(this.state.subscriptions)
       {
         var keys = Object.keys(this.state.subscriptions['Medicines']);
         var tableRows = keys.map((key)=>{
@@ -136,7 +138,7 @@ export default class UserDashboard extends React.Component
                     <div className="container">
                         <div className="row">
                             <div className="col-md-12 mb-0">
-                                <a href="index.html">Home</a> <span className="mx-2 mb-0">/</span>
+                                <a href="/">Home</a> <span className="mx-2 mb-0">/</span>
                                 <strong className="text-black">Dashboard</strong>
                             </div>
                         </div>

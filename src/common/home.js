@@ -86,7 +86,7 @@ export default class Home extends Component
     style={{ width: 240, height :410 }}
     cover={<img alt="example" src="images/man.png" />}
   >
-    <Meta title="Savings Bonanza" description="Get the best discounts on medicines here. Upto 50% discount on purchase of Rs. 999 and above." />
+    <Meta title="Winter Savings Bonanza" description="Get the best discounts on medicines here. Upto 50% discount on purchase of Rs. 999 and above." />
   </Card>
       </div>
     </div>

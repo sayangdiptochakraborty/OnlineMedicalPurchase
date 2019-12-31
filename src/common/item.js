@@ -35,6 +35,14 @@ export default class Item extends React.Component
     }
 
     addToCart = (e) =>{
+      if(sessionStorage.getItem('uid')!=undefined)
+      {
+        if(sessionStorage.getItem('type')!='customer')
+        {
+          message.warning('Not a customer.')
+          return;
+        }
+      }
       if(this.state.selectedShop==='')
       {
         message.warning('Please Select Shop.')
@@ -70,7 +78,7 @@ export default class Item extends React.Component
     {
       var dbRef = firebase.database().ref().child('Medicine');
       dbRef.once('value',snapshot=>{
-        var itemName=window.location.href.substring(window.location.href.lastIndexOf('/') + 1)
+        var itemName=decodeURIComponent(window.location.href).substring(window.location.href.lastIndexOf('/') + 1)
         this.setState({item:snapshot.child(itemName).val()})
       })
       if(sessionStorage.getItem('uid')!=undefined)
