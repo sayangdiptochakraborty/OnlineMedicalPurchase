@@ -46,7 +46,6 @@ export default class EmployeeDashboard extends React.Component
                 Phone: this.state.phone,
                 email: this.state.email,
                 image: this.state.image,
-                last_login_date: this.state.last_login_date,
                 thumb_image: this.state.thumb_image,
                 username: this.state.name
             }).then(()=>{
@@ -121,7 +120,7 @@ export default class EmployeeDashboard extends React.Component
                     <div className="container">
                         <div className="row">
                             <div className="col-md-12 mb-0">
-                                <a href="javascript:void(0);" onClick={(e)=>{this.setState({detailsVisible:false,settings:false,vendorReport:false})}}><span className="mx-2 mb-0"><Icon type="arrow-left" style={{fontSize: '27px'}}/></span>Back</a>
+                                <a href="javascript:void(0);" onClick={(e)=>{this.setState({orderHistory:false,detailsVisible:false,settings:false,vendorReport:false})}}><span className="mx-2 mb-0"><Icon type="arrow-left" style={{fontSize: '27px'}}/></span>Back</a>
                             </div>
                         </div>
                     </div>

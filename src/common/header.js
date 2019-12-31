@@ -115,6 +115,7 @@ export default class Header extends Component{
             Shop_Name: this.state.name,
             username: this.state.name,
             image: "default",
+            thumb_image: "default",
           }).then(()=>{
             var dbRef = firebase.database().ref().child('Seller').child(firebase.auth().currentUser.uid);
             dbRef.once('value').then(function(snap){

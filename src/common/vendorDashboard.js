@@ -117,22 +117,23 @@ export default class VendorDashboard extends React.Component
     }
   }
     update = (e) => {
-      var uid = sessionStorage.getItem('uid');
-        firebase.database().ref().child(`Seller/${uid}`).set({
+        var uid = sessionStorage.getItem('uid');
+        firebase.database().ref().child('Seller').child(uid).update({
           Shop_Address: this.state.address,
           Shop_Phone: this.state.phone,
           Shop_Name: this.state.name,
           email: this.state.email,
           username: this.state.username,
           image: this.state.image,
-          thumb_image: this.state.thumb_image,
-          Transaction: this.state.transaction
+          thumb_image: this.state.thumb_image
         }).then(()=>{
           message.success('Details Updated')
           sessionStorage.removeItem('userDetails');
-          var dbRef = firebase.database().ref().child('Seller').child(uid);
-          dbRef.on('value',snap=>sessionStorage.setItem('userDetails',JSON.stringify(snap.val())));
-          document.location.reload();
+          firebase.database().ref().child('Seller').child(uid).once('value').then(function(snap)
+          {
+            sessionStorage.setItem('userDetails',JSON.stringify(snap.val()));
+            document.location.reload();
+          })
         }).catch(function(error){
           message.log(error.message);
         })
@@ -143,7 +144,7 @@ export default class VendorDashboard extends React.Component
       if(uid!=undefined)
       {
         var userDetails = JSON.parse(sessionStorage.getItem('userDetails'))
-        this.setState({name: userDetails.Shop_Name, address: userDetails.Shop_Address, phone: userDetails.Shop_Phone, transaction: userDetails.Transaction, image:userDetails.image, thumb_image: userDetails.thumb_image,username: userDetails.username})
+        this.setState({name: userDetails.Shop_Name, address: userDetails.Shop_Address, phone: userDetails.Shop_Phone, transaction: userDetails.Transaction, image:userDetails.image, thumb_image: userDetails.thumb_image,username: userDetails.username,email:userDetails.email})
       }
     }
     render()
@@ -193,7 +194,7 @@ export default class VendorDashboard extends React.Component
                     <br/>
                     <Row type="flex" justify="space-around">
                         <Col span={8}><Input addonBefore={<Icon type="user" />}  defaultValue={this.state.name} onChange={(e)=>{this.setState({name:e.target.value})}} size="large"/></Col>
-                        <Col span={8}><Input disabled="true" addonBefore={<Icon type="mail" />}  placeholder={this.state.email} size="large"/></Col>
+                        <Col span={8}><Input disabled="true" addonBefore={<Icon type="mail" />}  value={this.state.email} size="large"/></Col>
                     </Row>
                     <br/>
                     <Row type="flex" justify="space-around">
